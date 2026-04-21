@@ -905,6 +905,67 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   .person{padding:24px 18px}
 }
 
+/* Engagement form CTA */
+.team-engage{
+  margin-top:clamp(72px,9vw,110px);
+  background:linear-gradient(135deg,var(--vm-blue) 0%,#003b73 100%);
+  border-radius:28px;
+  padding:clamp(40px,5vw,64px) clamp(28px,4vw,56px);
+  color:var(--white);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:clamp(24px,4vw,48px);
+  align-items:center;
+  position:relative;overflow:hidden;
+}
+.team-engage::before{
+  content:"";position:absolute;
+  top:-40%;right:-10%;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(59,158,255,0.4) 0%,transparent 65%);
+  pointer-events:none;
+}
+.team-engage-content{position:relative;z-index:1}
+.team-engage-label{
+  font-size:11px;font-weight:600;letter-spacing:0.22em;
+  text-transform:uppercase;color:rgba(255,255,255,0.75);
+  margin-bottom:14px;
+}
+.team-engage h4{
+  font-size:clamp(24px,3vw,34px);
+  font-weight:600;line-height:1.2;letter-spacing:-0.02em;
+  margin-bottom:8px;
+  max-width:620px;
+}
+.team-engage p{
+  font-size:15px;line-height:1.5;
+  color:rgba(255,255,255,0.82);
+  max-width:560px;
+}
+.team-engage-btn{
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 28px;border-radius:999px;
+  background:var(--white);
+  color:var(--vm-blue);
+  font-size:15px;font-weight:600;letter-spacing:-0.01em;
+  transition:transform 0.3s var(--ease-apple),box-shadow 0.3s var(--ease-apple);
+  white-space:nowrap;
+}
+.team-engage-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 32px -8px rgba(0,0,0,0.3);
+}
+.team-engage-btn .arrow{
+  font-size:17px;transition:transform 0.3s var(--ease-apple);
+  display:inline-block;
+}
+.team-engage-btn:hover .arrow{transform:translateX(4px)}
+
+@media (max-width:700px){
+  .team-engage{grid-template-columns:1fr;text-align:left}
+  .team-engage-btn{justify-self:start}
+}
+
 
 .architecture{
   background:var(--gray-50);
@@ -1590,6 +1651,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       </div>
     </div>
 
+    <!-- Engagement Form CTA -->
+    <div class="team-engage reveal" data-delay="1">
+      <div class="team-engage-content">
+        <div class="team-engage-label">◉ Work with us</div>
+        <h4>Ready to engage the team?</h4>
+        <p>In order to request a new project or reporting, please complete the engagement form. The team will triage and route your request to the right Product Owner.</p>
+      </div>
+      <a href="https://forms.monday.com/forms/64f1fb4fadaa0a8f7bc5872eb8c7bf24?r=use1" target="_blank" rel="noopener noreferrer" class="team-engage-btn">
+        Complete engagement form
+        <span class="arrow">→</span>
+      </a>
+    </div>
+
   </div>
 </section>
 
@@ -1679,9 +1753,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       </p>
       <ul class="metric-list">
         <li class="metric reveal" data-delay="2">
-          <div class="metric-num">£M<span></span></div>
+          <div class="metric-num">£4.2<span>m</span></div>
           <div class="metric-label">
-            <strong>OPEX Avoidance</strong>
+            <strong>YTD OPEX Avoidance</strong>
             Measurable reduction in per-contact handling cost across voice and chat channels.
           </div>
         </li>
