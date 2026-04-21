@@ -862,6 +862,25 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   color:#1d8574;
 }
 
+/* Developer tier — shares structure with report but distinct color identity */
+.person.dev{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.08);
+  padding:22px 18px;
+  max-width:85%;
+}
+.person.dev .person-avatar{
+  width:72px;height:72px;
+  background:linear-gradient(135deg,#efeaf7 0%,#d6cae8 100%);
+}
+.person.dev:hover .person-avatar{
+  background:linear-gradient(135deg,#8b5cf6 0%,#6b3fc7 100%);
+}
+.person.dev .person-pill{
+  background:rgba(139,92,246,0.12);
+  color:#6b3fc7;
+}
+
 /* Team context intro */
 .team-context{
   max-width:820px;margin:0 auto clamp(48px,6vw,72px);
@@ -1542,12 +1561,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       </article>
     </div>
 
-    <!-- Direct report — Josh under Gilda (4th column) -->
+    <!-- Direct reports row — Declan under Andrew, Lisa under Philip, Josh under Gilda -->
     <div class="team-report-wrap">
-      <div class="team-report-slot"></div>
-      <div class="team-report-slot"></div>
-      <div class="team-report-slot"></div>
+      <div class="team-report-slot filled reveal" data-delay="1">
+        <article class="person dev">
+          <div class="person-avatar"><span class="initials">DO</span></div>
+          <div class="person-pill">Developer</div>
+          <div class="person-name">Declan O'Connor</div>
+          <div class="person-scope">Engineering</div>
+        </article>
+      </div>
       <div class="team-report-slot filled reveal" data-delay="2">
+        <article class="person dev">
+          <div class="person-avatar"><span class="initials">LT</span></div>
+          <div class="person-pill">Developer</div>
+          <div class="person-name">Lisa Tiveleva</div>
+          <div class="person-scope">Engineering</div>
+        </article>
+      </div>
+      <div class="team-report-slot"></div>
+      <div class="team-report-slot filled reveal" data-delay="3">
         <article class="person report">
           <div class="person-avatar"><span class="initials">JL</span></div>
           <div class="person-pill">VOC Insight</div>
