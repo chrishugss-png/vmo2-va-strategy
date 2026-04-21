@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Virgin Media O2 — Virtual Assistant Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   RESET & TOKENS
+   ========================================================= */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000000;
+  --white:#FFFFFF;
+  --vm-blue:#005EB8;
+  --vm-blue-glow:rgba(0,94,184,0.35);
+  --gray-50:#F5F5F7;
+  --gray-100:#E8E8ED;
+  --gray-300:#86868B;
+  --gray-500:#6E6E73;
+  --gray-800:#1D1D1F;
+  --gray-900:#0A0A0A;
+  --font-display:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  --ease-apple:cubic-bezier(0.22,1,0.36,1);
+  --ease-smooth:cubic-bezier(0.65,0,0.35,1);
+  --nav-h:52px;
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-padding-top:var(--nav-h)}
+/* Ensure anchor jumps land below the fixed nav */
+section[id]{scroll-margin-top:var(--nav-h)}
+body{
+  font-family:var(--font-display);
+  background:var(--white);
+  color:var(--black);
+  font-weight:400;
+  line-height:1.47;
+  letter-spacing:-0.011em;
+  overflow-x:hidden;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+
+/* =========================================================
+   NAV — frosted glass sticky header
+   ========================================================= */
+.nav{
+  position:fixed;top:0;left:0;right:0;
+  height:var(--nav-h);
+  z-index:100;
+  background:rgba(255,255,255,0.72);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid rgba(0,0,0,0.06);
+  transition:background 0.4s var(--ease-apple),color 0.4s var(--ease-apple),border-color 0.4s var(--ease-apple);
+}
+.nav.dark{
+  background:rgba(0,0,0,0.72);
+  border-bottom-color:rgba(255,255,255,0.08);
+  color:var(--white);
+}
+.nav-inner{
+  max-width:1024px;margin:0 auto;height:100%;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;
+  font-size:12px;letter-spacing:-0.01em;
+}
+.nav-brand{font-weight:600;font-size:13px;letter-spacing:-0.02em;white-space:nowrap}
+.nav-brand b{color:var(--vm-blue);font-weight:700}
+.nav.dark .nav-brand b{color:#3B9EFF}
+.nav-links{display:flex;gap:0;list-style:none}
+.nav-links li a{
+  display:block;
+  padding:6px 14px;
+  font-size:12px;font-weight:400;
+  color:inherit;opacity:0.62;
+  transition:opacity 0.2s ease,color 0.2s ease;
+  position:relative;
+}
+.nav-links li a:hover{opacity:1}
+.nav-links li a.active{
+  opacity:1;
+  color:var(--vm-blue);
+  font-weight:500;
+}
+.nav.dark .nav-links li a.active{color:#3B9EFF}
+.nav-cta{
+  font-size:12px;font-weight:500;
+  padding:6px 12px;border-radius:980px;
+  background:var(--vm-blue);color:var(--white);
+  transition:background 0.2s ease,transform 0.2s ease;
+}
+.nav-cta:hover{background:#0072dc;transform:scale(1.02)}
+.nav-mobile-toggle{display:none}
+
+@media (max-width:833px){
+  .nav-links{
+    position:fixed;top:var(--nav-h);left:0;right:0;
+    flex-direction:column;gap:0;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(20px);
+    padding:8px 22px 24px;
+    transform:translateY(-120%);
+    transition:transform 0.4s var(--ease-apple);
+    border-bottom:1px solid rgba(0,0,0,0.06);
+  }
+  .nav.dark .nav-links{background:rgba(0,0,0,0.96);border-bottom-color:rgba(255,255,255,0.08)}
+  .nav-links.open{transform:translateY(0)}
+  .nav-links li a{padding:14px 0;font-size:17px;border-bottom:1px solid rgba(0,0,0,0.06)}
+  .nav.dark .nav-links li a{border-bottom-color:rgba(255,255,255,0.08)}
+  .nav-mobile-toggle{
+    display:flex;flex-direction:column;gap:4px;
+    width:22px;height:22px;padding:0;
+    align-items:center;justify-content:center;
+  }
+  .nav-mobile-toggle span{
+    display:block;width:18px;height:1px;background:currentColor;
+    transition:transform 0.3s var(--ease-apple),opacity 0.3s;
+  }
+  .nav-mobile-toggle.open span:nth-child(1){transform:translateY(2.5px) rotate(45deg)}
+  .nav-mobile-toggle.open span:nth-child(2){transform:translateY(-2.5px) rotate(-45deg)}
+  .nav-cta{display:none}
+}
+
+/* =========================================================
+   UTIL — scroll reveal
+   ========================================================= */
+.reveal{
+  opacity:0;transform:translateY(40px);
+  transition:opacity 1s var(--ease-apple),transform 1s var(--ease-apple);
+  will-change:opacity,transform;
+}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal[data-delay="1"]{transition-delay:0.08s}
+.reveal[data-delay="2"]{transition-delay:0.16s}
+.reveal[data-delay="3"]{transition-delay:0.24s}
+.reveal[data-delay="4"]{transition-delay:0.32s}
+.reveal[data-delay="5"]{transition-delay:0.4s}
+
+/* =========================================================
+   SHARED TYPE
+   ========================================================= */
+.eyebrow{
+  font-size:13px;font-weight:500;letter-spacing:0.02em;
+  color:var(--vm-blue);
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+.dark-theme .eyebrow{color:#3B9EFF}
+.display{
+  font-size:clamp(48px,9vw,108px);
+  font-weight:700;
+  line-height:1.04;
+  letter-spacing:-0.035em;
+}
+.h1{
+  font-size:clamp(40px,6.4vw,76px);
+  font-weight:700;line-height:1.06;
+  letter-spacing:-0.028em;
+}
+.h2{
+  font-size:clamp(28px,3.4vw,44px);
+  font-weight:600;line-height:1.1;letter-spacing:-0.022em;
+}
+.lead{
+  font-size:clamp(19px,2vw,24px);
+  line-height:1.42;font-weight:400;
+  letter-spacing:-0.009em;
+  color:var(--gray-500);
+  max-width:720px;
+}
+.dark-theme .lead{color:#a1a1a6}
+.section{
+  padding:clamp(80px,12vw,160px) 22px;
+  position:relative;
+}
+.section-inner{max-width:1120px;margin:0 auto}
+
+/* =========================================================
+   PAGE 1 — THE VISION (dark hero)
+   ========================================================= */
+.vision{
+  background:var(--black);color:var(--white);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:calc(var(--nav-h) + 80px) 22px 120px;
+  position:relative;overflow:hidden;
+}
+.vision::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(0,94,184,0.18) 0%,transparent 55%);
+  pointer-events:none;
+}
+.vision-inner{
+  max-width:1120px;margin:0 auto;
+  position:relative;z-index:2;
+  text-align:center;
+}
+.vision .eyebrow{color:#3B9EFF}
+.vision h1{
+  font-size:clamp(56px,11vw,148px);
+  font-weight:700;
+  line-height:0.98;
+  letter-spacing:-0.04em;
+  margin-bottom:28px;
+  background:linear-gradient(180deg,#ffffff 0%,#ffffff 40%,#8E8E93 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.vision-sub{
+  font-size:clamp(19px,2.1vw,26px);
+  color:#a1a1a6;max-width:640px;
+  margin:0 auto 64px;line-height:1.4;letter-spacing:-0.01em;
+}
+
+/* 3D abstract visual */
+.orb-wrap{
+  width:min(92vw,640px);
+  aspect-ratio:1/1;
+  margin:0 auto;
+  position:relative;
+}
+.orb-wrap svg{width:100%;height:100%}
+@keyframes orbit-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes orbit-rev{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+@keyframes pulse-glow{
+  0%,100%{opacity:0.55;transform:scale(1)}
+  50%{opacity:0.85;transform:scale(1.04)}
+}
+.orb-outer{animation:orbit-slow 38s linear infinite;transform-origin:center}
+.orb-mid{animation:orbit-rev 22s linear infinite;transform-origin:center}
+.orb-core{animation:pulse-glow 4s ease-in-out infinite;transform-origin:center}
+
+.vision-scroll-cue{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
+  color:#6E6E73;display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.vision-scroll-cue::after{
+  content:"";width:1px;height:24px;background:#3a3a3c;
+  animation:scrollCue 2s ease-in-out infinite;
+}
+@keyframes scrollCue{
+  0%,100%{opacity:0.3;transform:scaleY(0.4);transform-origin:top}
+  50%{opacity:1;transform:scaleY(1);transform-origin:top}
+}
+
+/* Vision content block */
+.vision-copy{
+  margin-top:clamp(100px,14vw,180px);
+  max-width:900px;margin-left:auto;margin-right:auto;
+}
+.vision-copy .big-text{
+  font-size:clamp(26px,3.6vw,48px);
+  font-weight:500;line-height:1.25;letter-spacing:-0.02em;
+}
+.vision-copy .big-text em{
+  font-style:normal;
+  background:linear-gradient(90deg,#3B9EFF 0%,#ffffff 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* =========================================================
+   PAGE 2 — THE FOUNDATION (bento)
+   ========================================================= */
+.foundation{background:var(--gray-50);color:var(--black)}
+.foundation .section-head{
+  text-align:center;
+  margin-bottom:clamp(48px,6vw,80px);
+}
+.foundation .section-head .lead{margin:18px auto 0}
+
+.bento{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  grid-auto-rows:minmax(200px,auto);
+  gap:16px;
+}
+.bento-card{
+  background:var(--white);
+  border-radius:28px;
+  padding:36px;
+  position:relative;overflow:hidden;
+  transition:transform 0.5s var(--ease-apple),box-shadow 0.5s var(--ease-apple);
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  min-height:340px;
+}
+.bento-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 24px 60px -20px rgba(0,0,0,0.18);
+}
+.bento-card .card-tag{
+  font-size:12px;font-weight:500;
+  color:var(--vm-blue);
+  letter-spacing:0.02em;
+  margin-bottom:10px;
+}
+.bento-card h3{
+  font-size:clamp(24px,2.6vw,34px);
+  font-weight:600;line-height:1.12;
+  letter-spacing:-0.02em;
+  margin-bottom:12px;
+  max-width:90%;
+}
+.bento-card p{
+  font-size:15px;line-height:1.5;
+  color:var(--gray-500);
+  letter-spacing:-0.005em;
+  max-width:90%;
+}
+
+.bento-card.card-1{grid-column:span 3}
+.bento-card.card-2{grid-column:span 3}
+.bento-card.card-3{grid-column:span 6;min-height:300px}
+
+.bento-card.card-1{
+  background:linear-gradient(135deg,#000 0%,#1a1a1a 100%);
+  color:var(--white);
+}
+.bento-card.card-1 p{color:#a1a1a6}
+.bento-card.card-1 .card-tag{color:#3B9EFF}
+
+.bento-card.card-3{
+  background:linear-gradient(135deg,var(--vm-blue) 0%,#003b73 100%);
+  color:var(--white);
+}
+.bento-card.card-3 p{color:rgba(255,255,255,0.82)}
+.bento-card.card-3 .card-tag{color:rgba(255,255,255,0.9)}
+
+/* bento visuals */
+.bento-visual{
+  margin-top:24px;
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  min-height:140px;
+  position:relative;
+}
+
+/* card 1 — waveform */
+.waveform{display:flex;gap:4px;align-items:center;height:80px}
+.waveform span{
+  display:block;width:4px;border-radius:2px;
+  background:linear-gradient(180deg,#3B9EFF,#005EB8);
+  animation:wave 1.4s ease-in-out infinite;
+}
+@keyframes wave{0%,100%{height:12px}50%{height:70px}}
+.waveform span:nth-child(1){animation-delay:0s}
+.waveform span:nth-child(2){animation-delay:0.1s}
+.waveform span:nth-child(3){animation-delay:0.2s}
+.waveform span:nth-child(4){animation-delay:0.3s}
+.waveform span:nth-child(5){animation-delay:0.15s}
+.waveform span:nth-child(6){animation-delay:0.05s}
+.waveform span:nth-child(7){animation-delay:0.25s}
+.waveform span:nth-child(8){animation-delay:0.35s}
+.waveform span:nth-child(9){animation-delay:0.2s}
+.waveform span:nth-child(10){animation-delay:0.1s}
+.waveform span:nth-child(11){animation-delay:0.3s}
+.waveform span:nth-child(12){animation-delay:0.2s}
+
+/* card 2 — NLU tokens */
+.tokens{display:flex;flex-wrap:wrap;gap:8px;max-width:340px}
+.tokens span{
+  padding:8px 14px;border-radius:999px;
+  background:#f0f0f3;
+  font-size:13px;font-weight:500;
+  color:var(--black);
+  border:1px solid rgba(0,0,0,0.04);
+}
+.tokens span.active{
+  background:var(--vm-blue);color:var(--white);
+}
+
+/* card 3 — intent flow */
+.intent-flow{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+}
+.intent-node{
+  flex:1;min-width:100px;max-width:140px;
+  padding:14px 10px;border-radius:14px;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.18);
+  text-align:center;
+  font-size:12px;font-weight:500;
+  backdrop-filter:blur(10px);
+}
+.intent-arrow{
+  flex:0 0 auto;color:rgba(255,255,255,0.5);
+  font-size:18px;
+}
+
+@media (max-width:833px){
+  .bento{grid-template-columns:1fr;gap:12px}
+  .bento-card.card-1,
+  .bento-card.card-2,
+  .bento-card.card-3{grid-column:span 1;min-height:280px}
+  .bento-card{padding:28px;border-radius:22px}
+  .intent-flow{flex-direction:column}
+  .intent-arrow{transform:rotate(90deg)}
+}
+
+/* =========================================================
+   PAGE 3 — THE IMPACT (split screen)
+   ========================================================= */
+.impact{
+  background:var(--black);color:var(--white);
+  padding:0;
+}
+.impact-head{
+  text-align:center;
+  padding:clamp(80px,10vw,140px) 22px clamp(60px,7vw,90px);
+  max-width:900px;margin:0 auto;
+}
+.impact-head h2{
+  background:linear-gradient(180deg,#fff 0%,#8E8E93 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.impact-head .lead{color:#a1a1a6}
+
+.split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:#1d1d1f;
+  border-top:1px solid #1d1d1f;
+}
+.split-side{
+  background:var(--black);
+  padding:clamp(60px,7vw,100px) clamp(28px,5vw,72px);
+  min-height:80vh;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.split-side::before{
+  content:"";position:absolute;top:-40%;
+  width:500px;height:500px;border-radius:50%;
+  filter:blur(120px);
+  opacity:0.25;
+  z-index:0;
+}
+.split-left::before{left:-20%;background:#3B9EFF}
+.split-right::before{right:-20%;background:var(--vm-blue)}
+.split-side > *{position:relative;z-index:1}
+.split-side .split-tag{
+  font-size:12px;font-weight:600;letter-spacing:0.18em;
+  text-transform:uppercase;color:#3B9EFF;
+  margin-bottom:18px;
+}
+.split-side h3{
+  font-size:clamp(32px,4.2vw,56px);
+  font-weight:700;line-height:1.05;letter-spacing:-0.028em;
+  margin-bottom:20px;
+}
+.split-side p{
+  font-size:17px;line-height:1.5;color:#a1a1a6;
+  max-width:440px;margin-bottom:40px;
+}
+.metric-list{list-style:none;display:flex;flex-direction:column;gap:24px}
+.metric{
+  display:flex;align-items:flex-start;gap:18px;
+  padding-bottom:24px;border-bottom:1px solid #1d1d1f;
+}
+.metric:last-child{border-bottom:none;padding-bottom:0}
+.metric-num{
+  font-size:clamp(36px,4.5vw,56px);
+  font-weight:700;letter-spacing:-0.03em;line-height:1;
+  color:#fff;flex:0 0 auto;min-width:120px;
+}
+.metric-num span{font-size:0.5em;color:#3B9EFF;margin-left:2px;font-weight:600}
+.metric-label{
+  font-size:14px;line-height:1.4;color:#a1a1a6;
+  padding-top:10px;
+}
+.metric-label strong{color:#fff;display:block;font-weight:600;font-size:15px;margin-bottom:4px}
+
+@media (max-width:833px){
+  .split{grid-template-columns:1fr}
+  .split-side{min-height:auto;padding:72px 28px}
+}
+
+/* =========================================================
+   PAGE 4 — THE ROADMAP (horizontal timeline)
+   ========================================================= */
+.roadmap{background:var(--white);color:var(--black)}
+.roadmap .section-head{text-align:center;margin-bottom:clamp(56px,7vw,90px)}
+.roadmap .section-head .lead{margin:18px auto 0}
+
+.timeline{
+  position:relative;
+  padding:40px 0 20px;
+}
+.timeline-track{
+  position:absolute;top:72px;left:5%;right:5%;
+  height:1px;background:linear-gradient(90deg,transparent 0%,#d2d2d7 12%,#d2d2d7 88%,transparent 100%);
+}
+.timeline-track::before{
+  content:"";position:absolute;left:0;top:0;height:100%;
+  width:var(--progress,0%);
+  background:var(--vm-blue);
+  transition:width 1.8s var(--ease-apple);
+}
+.timeline-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  position:relative;
+}
+.tl-card{
+  position:relative;
+  padding-top:88px;
+  cursor:pointer;
+}
+.tl-card .tl-dot{
+  position:absolute;top:64px;left:50%;transform:translateX(-50%);
+  width:16px;height:16px;border-radius:50%;
+  background:var(--white);
+  border:2px solid var(--vm-blue);
+  transition:transform 0.4s var(--ease-apple),background 0.4s var(--ease-apple);
+  z-index:2;
+}
+.tl-card:hover .tl-dot{background:var(--vm-blue);transform:translateX(-50%) scale(1.4)}
+
+.tl-body{
+  background:var(--gray-50);
+  border-radius:22px;
+  padding:32px;
+  transition:transform 0.5s var(--ease-apple),box-shadow 0.5s var(--ease-apple),background 0.5s var(--ease-apple);
+  position:relative;overflow:hidden;
+  min-height:260px;
+  display:flex;flex-direction:column;
+}
+.tl-card:hover .tl-body{
+  transform:translateY(-6px);
+  background:var(--white);
+  box-shadow:0 30px 60px -20px rgba(0,0,0,0.18);
+}
+.tl-quarter{
+  font-size:12px;font-weight:600;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--vm-blue);
+  margin-bottom:12px;
+}
+.tl-title{
+  font-size:clamp(22px,2.4vw,28px);
+  font-weight:600;line-height:1.15;letter-spacing:-0.02em;
+  margin-bottom:10px;
+}
+.tl-desc{
+  font-size:15px;line-height:1.5;color:var(--gray-500);
+  margin-bottom:16px;
+}
+.tl-details{
+  max-height:0;opacity:0;overflow:hidden;
+  transition:max-height 0.5s var(--ease-apple),opacity 0.4s var(--ease-apple),margin 0.5s var(--ease-apple);
+  border-top:1px solid #e5e5ea;
+  margin-top:0;padding-top:0;
+}
+.tl-card:hover .tl-details{
+  max-height:260px;opacity:1;
+  margin-top:16px;padding-top:16px;
+}
+.tl-details-label{
+  font-size:11px;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--vm-blue);
+  margin-bottom:10px;
+}
+.tl-details ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.tl-details li{
+  font-size:13px;line-height:1.45;color:var(--gray-800);
+  padding-left:18px;position:relative;
+}
+.tl-details li::before{
+  content:"";position:absolute;left:0;top:7px;
+  width:8px;height:1px;background:var(--vm-blue);
+}
+
+@media (max-width:833px){
+  .timeline-grid{grid-template-columns:1fr;gap:16px}
+  .timeline-track{display:none}
+  .tl-card{padding-top:0}
+  .tl-card .tl-dot{display:none}
+  .tl-body{min-height:0}
+  .tl-details{max-height:260px;opacity:1;margin-top:16px;padding-top:16px}
+}
+
+/* =========================================================
+   PAGE 5 — THE HORIZON (dark closer)
+   ========================================================= */
+.horizon{
+  background:var(--black);color:var(--white);
+  padding:clamp(100px,14vw,180px) 22px;
+  position:relative;overflow:hidden;
+}
+.horizon::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 20%,rgba(0,94,184,0.2) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(59,158,255,0.12) 0%,transparent 55%);
+  pointer-events:none;
+}
+.horizon-inner{
+  max-width:1120px;margin:0 auto;position:relative;z-index:2;
+}
+.horizon-hero{text-align:center;margin-bottom:clamp(80px,10vw,140px)}
+.horizon-hero h2{
+  font-size:clamp(48px,9vw,120px);
+  font-weight:700;line-height:1;letter-spacing:-0.035em;
+  margin-bottom:24px;
+}
+.horizon-hero h2 .line2{
+  display:block;
+  background:linear-gradient(90deg,#3B9EFF 0%,#fff 60%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.horizon-hero .lead{
+  color:#a1a1a6;margin:0 auto;
+  font-size:clamp(18px,1.8vw,22px);
+}
+
+/* transition visual: Rules → Reasoning */
+.transition{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  gap:28px;align-items:stretch;
+  margin-bottom:clamp(80px,10vw,130px);
+}
+.t-side{
+  padding:40px 32px;border-radius:24px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  min-height:280px;
+  display:flex;flex-direction:column;
+}
+.t-side.t-new{
+  background:linear-gradient(135deg,rgba(0,94,184,0.22) 0%,rgba(0,94,184,0.06) 100%);
+  border-color:rgba(59,158,255,0.3);
+}
+.t-label{
+  font-size:11px;font-weight:600;letter-spacing:0.18em;
+  text-transform:uppercase;color:#a1a1a6;
+  margin-bottom:14px;
+}
+.t-new .t-label{color:#3B9EFF}
+.t-heading{
+  font-size:clamp(22px,2.6vw,32px);
+  font-weight:600;line-height:1.15;letter-spacing:-0.02em;
+  margin-bottom:16px;
+}
+.t-side p{font-size:14px;line-height:1.5;color:#a1a1a6;margin-bottom:18px}
+.t-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.t-list li{
+  font-size:13px;color:#d2d2d7;
+  padding-left:20px;position:relative;
+}
+.t-list li::before{
+  content:"";position:absolute;left:0;top:8px;
+  width:10px;height:1px;background:#3B9EFF;
+}
+.t-arrow{
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;color:#3B9EFF;
+  min-width:40px;
+}
+
+@media (max-width:833px){
+  .transition{grid-template-columns:1fr}
+  .t-arrow{transform:rotate(90deg);padding:10px 0}
+}
+
+/* footer statement */
+.footer-statement{
+  border-top:1px solid rgba(255,255,255,0.08);
+  padding-top:clamp(60px,8vw,100px);
+  text-align:center;
+}
+.footer-statement .stamp{
+  font-size:11px;font-weight:500;letter-spacing:0.22em;
+  text-transform:uppercase;color:#6E6E73;
+  margin-bottom:32px;
+}
+.footer-statement h3{
+  font-size:clamp(32px,5vw,64px);
+  font-weight:600;line-height:1.08;letter-spacing:-0.028em;
+  max-width:900px;margin:0 auto 48px;
+}
+.footer-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:40px;border-top:1px solid rgba(255,255,255,0.06);
+  font-size:12px;color:#6E6E73;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-meta .vm-mark b{color:#3B9EFF;font-weight:600}
+
+@media (max-width:500px){
+  .footer-meta{justify-content:center;text-align:center}
+}
+
+/* =========================================================
+   PAGE 1.5 — THE TEAM (Conversational Commerce & AI)
+   ========================================================= */
+.team{
+  background:var(--white);
+  color:var(--black);
+  padding:clamp(100px,14vw,180px) 22px;
+  position:relative;overflow:hidden;
+}
+.team .section-head{
+  text-align:center;
+  max-width:860px;margin:0 auto clamp(48px,6vw,72px);
+}
+
+/* Purpose statement */
+.team-purpose{
+  max-width:900px;margin:0 auto clamp(64px,8vw,100px);
+  padding:clamp(40px,5vw,64px) clamp(28px,4vw,56px);
+  background:linear-gradient(135deg,#000 0%,#1a1a1a 100%);
+  color:var(--white);
+  border-radius:28px;
+  position:relative;overflow:hidden;
+}
+.team-purpose::before{
+  content:"";position:absolute;
+  top:-20%;right:-10%;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,94,184,0.4) 0%,transparent 70%);
+  pointer-events:none;
+}
+.team-purpose-label{
+  font-size:11px;font-weight:600;letter-spacing:0.22em;
+  text-transform:uppercase;color:#3B9EFF;
+  margin-bottom:16px;position:relative;z-index:1;
+}
+.team-purpose-text{
+  font-size:clamp(22px,3vw,36px);
+  font-weight:500;line-height:1.28;letter-spacing:-0.022em;
+  position:relative;z-index:1;
+}
+.team-purpose-text em{
+  font-style:normal;
+  background:linear-gradient(90deg,#3B9EFF 0%,#fff 80%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* Peer row */
+.team-layer-label{
+  font-size:11px;font-weight:600;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--vm-blue);
+  text-align:center;margin-bottom:24px;
+  display:flex;align-items:center;justify-content:center;gap:16px;
+}
+.team-layer-label::before,
+.team-layer-label::after{
+  content:"";flex:0 0 40px;height:1px;background:rgba(0,0,0,0.12);
+}
+
+.team-peers{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:clamp(48px,6vw,72px);
+  position:relative;
+}
+.team-peers::after{
+  content:"";position:absolute;
+  left:12.5%;right:12.5%;bottom:-48px;
+  height:1px;background:linear-gradient(90deg,transparent 0%,rgba(0,0,0,0.12) 20%,rgba(0,0,0,0.12) 80%,transparent 100%);
+}
+
+/* Individual person card */
+.person{
+  background:var(--gray-50);
+  border-radius:22px;
+  padding:28px 22px;
+  text-align:center;
+  border:1px solid rgba(0,0,0,0.04);
+  transition:transform 0.5s var(--ease-apple),box-shadow 0.5s var(--ease-apple),background 0.5s var(--ease-apple);
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;
+}
+.person:hover{
+  transform:translateY(-6px);
+  background:var(--white);
+  box-shadow:0 24px 50px -16px rgba(0,0,0,0.14);
+}
+
+.person-avatar{
+  width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,#f0f0f3 0%,#e5e5ea 100%);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+  position:relative;
+  transition:background 0.5s var(--ease-apple);
+}
+.person:hover .person-avatar{
+  background:linear-gradient(135deg,var(--vm-blue) 0%,#003b73 100%);
+  color:var(--white);
+}
+.person-avatar .initials{
+  font-size:24px;font-weight:600;
+  letter-spacing:-0.02em;
+  color:var(--gray-800);
+  transition:color 0.5s var(--ease-apple);
+}
+.person:hover .person-avatar .initials{color:var(--white)}
+
+.person-pill{
+  font-size:10px;font-weight:600;letter-spacing:0.14em;
+  text-transform:uppercase;
+  padding:5px 12px;border-radius:999px;
+  margin-bottom:10px;
+  background:rgba(0,94,184,0.08);
+  color:var(--vm-blue);
+}
+.person-name{
+  font-size:16px;font-weight:600;
+  letter-spacing:-0.012em;
+  line-height:1.2;
+  margin-bottom:4px;
+}
+.person-scope{
+  font-size:12px;font-weight:400;
+  color:var(--gray-500);
+  letter-spacing:-0.005em;
+}
+
+/* Direct report row — Josh under Gilda */
+.team-report-wrap{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  position:relative;
+}
+.team-report-slot{
+  display:flex;flex-direction:column;align-items:center;
+}
+.team-report-slot.filled::before{
+  content:"";
+  width:1px;height:40px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.18) 0%,transparent 100%);
+  margin-bottom:20px;
+}
+.person.report{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.08);
+  padding:22px 18px;
+  max-width:85%;
+}
+.person.report .person-avatar{
+  width:72px;height:72px;
+  background:linear-gradient(135deg,#e0f7f4 0%,#b8e8df 100%);
+}
+.person.report:hover .person-avatar{
+  background:linear-gradient(135deg,#3DB5A0 0%,#1d8574 100%);
+}
+.person.report .person-pill{
+  background:rgba(61,181,160,0.12);
+  color:#1d8574;
+}
+
+/* Team context intro */
+.team-context{
+  max-width:820px;margin:0 auto clamp(48px,6vw,72px);
+  text-align:center;
+}
+.team-context p{
+  font-size:clamp(17px,1.8vw,20px);
+  line-height:1.55;color:var(--gray-500);
+  letter-spacing:-0.007em;
+}
+.team-context p + p{margin-top:18px}
+
+@media (max-width:900px){
+  .team-peers{grid-template-columns:repeat(2,1fr)}
+  .team-peers::after{display:none}
+  .team-report-wrap{grid-template-columns:1fr;justify-items:center}
+  .team-report-slot.filled::before{display:none}
+  .person.report{max-width:280px;margin-top:8px}
+}
+@media (max-width:480px){
+  .team-peers{grid-template-columns:1fr;gap:12px}
+  .person{padding:24px 18px}
+}
+
+
+.architecture{
+  background:var(--gray-50);
+  color:var(--black);
+  padding:clamp(100px,14vw,180px) 22px;
+  position:relative;overflow:hidden;
+}
+.architecture .section-head{
+  text-align:center;
+  max-width:820px;margin:0 auto clamp(60px,8vw,100px);
+}
+.arch-diagram{
+  max-width:1280px;margin:0 auto;
+  display:flex;flex-direction:column;
+  gap:clamp(40px,5vw,64px);
+}
+
+/* Stage banner */
+.arch-stage{
+  display:flex;align-items:baseline;gap:14px;
+  margin-bottom:6px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,0.08);
+}
+.arch-stage-num{
+  font-size:12px;font-weight:600;
+  color:var(--vm-blue);
+  letter-spacing:0.14em;
+}
+.arch-stage-title{
+  font-size:clamp(20px,2.2vw,28px);
+  font-weight:600;letter-spacing:-0.018em;
+}
+.arch-stage-sub{
+  font-size:14px;color:var(--gray-500);
+  margin-left:auto;letter-spacing:-0.005em;
+}
+@media (max-width:600px){
+  .arch-stage{flex-wrap:wrap;gap:8px}
+  .arch-stage-sub{margin-left:0;width:100%}
+}
+
+/* Stage 1 — intake */
+.arch-intake{
+  display:grid;
+  grid-template-columns:1fr auto 1.3fr;
+  gap:clamp(20px,3vw,40px);
+  align-items:center;
+}
+.arch-customer{
+  background:var(--white);border-radius:22px;padding:28px;
+  text-align:center;
+  border:1px solid rgba(0,0,0,0.06);
+}
+.arch-customer .ac-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--black);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:500;
+  margin:0 auto 14px;
+}
+.arch-customer h4{font-size:17px;font-weight:600;letter-spacing:-0.01em;margin-bottom:4px}
+.arch-customer p{font-size:13px;color:var(--gray-500)}
+
+.arch-flow-arrow{
+  font-size:24px;color:var(--vm-blue);
+  display:flex;align-items:center;justify-content:center;
+}
+
+.arch-channels{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.arch-channel{
+  background:var(--white);border-radius:16px;padding:18px 14px;
+  text-align:center;
+  border:1px solid rgba(0,0,0,0.06);
+  transition:transform 0.4s var(--ease-apple),border-color 0.4s var(--ease-apple);
+}
+.arch-channel:hover{transform:translateY(-3px);border-color:var(--vm-blue)}
+.arch-channel .ch-dot{
+  width:10px;height:10px;border-radius:50%;
+  margin:0 auto 10px;
+}
+.arch-channel[data-type="online"] .ch-dot{background:var(--vm-blue)}
+.arch-channel[data-type="app"] .ch-dot{background:#34C759}
+.arch-channel[data-type="proactive"] .ch-dot{background:#FF9500}
+.arch-channel h5{font-size:13px;font-weight:600;margin-bottom:3px}
+.arch-channel p{font-size:11px;color:var(--gray-500);line-height:1.35}
+@media (max-width:700px){
+  .arch-intake{grid-template-columns:1fr;text-align:center}
+  .arch-flow-arrow{transform:rotate(90deg)}
+}
+
+/* Stage 2 — Master Router (GTM) */
+.arch-router{
+  background:var(--black);color:var(--white);
+  border-radius:28px;
+  padding:clamp(32px,4vw,48px);
+  position:relative;overflow:hidden;
+}
+.arch-router::before{
+  content:"";position:absolute;
+  top:-30%;right:-10%;width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,94,184,0.35) 0%,transparent 70%);
+  pointer-events:none;
+}
+.arch-router-head{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:24px;position:relative;z-index:1;
+}
+.gtm-badge{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,#4285F4 0%,#0F9D58 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:13px;color:#fff;
+  letter-spacing:-0.02em;
+  flex-shrink:0;
+}
+.arch-router-head h4{
+  font-size:clamp(22px,2.4vw,30px);
+  font-weight:600;letter-spacing:-0.02em;
+}
+.arch-router-head p{
+  font-size:13px;color:#a1a1a6;margin-top:2px;
+}
+.arch-router-body{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:clamp(24px,3vw,40px);
+  align-items:start;
+  position:relative;z-index:1;
+}
+.arch-regex{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:18px;padding:22px;
+}
+.arch-regex .rx-label{
+  font-size:11px;font-weight:600;letter-spacing:0.16em;
+  text-transform:uppercase;color:#3B9EFF;
+  margin-bottom:12px;
+}
+.arch-regex .rx-code{
+  font-family:'SF Mono','Menlo',monospace;
+  font-size:12px;line-height:1.7;
+  color:#d2d2d7;
+  background:rgba(0,0,0,0.4);
+  padding:14px;border-radius:10px;
+  border-left:2px solid var(--vm-blue);
+  overflow-x:auto;white-space:nowrap;
+}
+.arch-regex .rx-code .rx-op{color:#FF9F0A}
+.arch-regex .rx-code .rx-str{color:#3B9EFF}
+.arch-regex-note{
+  font-size:12px;color:#a1a1a6;line-height:1.5;
+  margin-top:14px;
+}
+
+/* Entry points grid — 8 widget routes */
+.arch-entries{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.arch-entry{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:14px;
+  cursor:pointer;
+  transition:all 0.4s var(--ease-apple);
+  position:relative;overflow:hidden;
+}
+.arch-entry:hover{
+  background:rgba(0,94,184,0.18);
+  border-color:var(--vm-blue);
+  transform:translateY(-2px);
+}
+.arch-entry::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;
+  width:2px;background:var(--vm-blue);
+  transform:scaleY(0);transform-origin:top;
+  transition:transform 0.4s var(--ease-apple);
+}
+.arch-entry:hover::before{transform:scaleY(1)}
+.arch-entry-num{
+  font-size:10px;font-weight:600;
+  color:#6E6E73;letter-spacing:0.1em;
+  margin-bottom:6px;
+}
+.arch-entry h5{
+  font-size:13px;font-weight:600;
+  color:#fff;line-height:1.25;
+  margin-bottom:4px;letter-spacing:-0.01em;
+}
+.arch-entry .widget{
+  font-family:'SF Mono','Menlo',monospace;
+  font-size:10px;color:#3B9EFF;
+}
+.arch-entry.nested{
+  grid-column:span 1;
+  border-left:2px dashed rgba(59,158,255,0.4);
+  padding-left:14px;
+}
+
+@media (max-width:1024px){
+  .arch-router-body{grid-template-columns:1fr}
+  .arch-entries{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:500px){
+  .arch-entries{grid-template-columns:1fr}
+}
+
+/* Stage 3 — API Gateway pipeline */
+.arch-pipeline{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  align-items:stretch;
+}
+.arch-pipe-step{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.06);
+  border-radius:18px;
+  padding:22px;
+  position:relative;
+  transition:transform 0.4s var(--ease-apple),box-shadow 0.4s var(--ease-apple);
+}
+.arch-pipe-step:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px -16px rgba(0,0,0,0.15);
+}
+.arch-pipe-step:not(:last-child)::after{
+  content:"→";
+  position:absolute;
+  right:-14px;top:50%;transform:translateY(-50%);
+  font-size:16px;color:var(--vm-blue);
+  background:var(--gray-50);
+  width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;
+  z-index:2;
+}
+.arch-pipe-num{
+  font-size:10px;font-weight:600;
+  color:var(--vm-blue);letter-spacing:0.14em;
+  margin-bottom:8px;
+}
+.arch-pipe-step h5{
+  font-size:14px;font-weight:600;
+  margin-bottom:6px;letter-spacing:-0.01em;
+}
+.arch-pipe-step p{
+  font-size:12px;line-height:1.45;
+  color:var(--gray-500);
+}
+.arch-pipe-step code{
+  display:inline-block;
+  font-family:'SF Mono','Menlo',monospace;
+  font-size:10px;
+  background:var(--gray-100);
+  padding:2px 6px;border-radius:4px;
+  color:var(--gray-800);
+  margin-top:6px;
+  word-break:break-all;
+}
+@media (max-width:900px){
+  .arch-pipeline{grid-template-columns:repeat(2,1fr)}
+  .arch-pipe-step:nth-child(2n)::after{display:none}
+}
+@media (max-width:500px){
+  .arch-pipeline{grid-template-columns:1fr}
+  .arch-pipe-step::after{display:none !important}
+}
+
+/* Stage 4 — resolution outcomes */
+.arch-outcomes{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:clamp(16px,2vw,28px);
+  align-items:stretch;
+}
+.arch-decision{
+  background:var(--white);
+  border:2px solid var(--vm-blue);
+  border-radius:18px;padding:20px;
+  display:flex;flex-direction:column;justify-content:center;
+  text-align:center;
+  min-width:160px;
+}
+.arch-decision .dec-label{
+  font-size:10px;font-weight:600;letter-spacing:0.14em;
+  color:var(--vm-blue);margin-bottom:8px;
+}
+.arch-decision h5{
+  font-size:14px;font-weight:600;line-height:1.25;
+  letter-spacing:-0.01em;
+}
+.arch-outcome{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.06);
+  border-radius:18px;padding:22px;
+  position:relative;
+}
+.arch-outcome.contained{
+  background:linear-gradient(135deg,#000 0%,#1d1d1f 100%);
+  color:var(--white);border-color:transparent;
+}
+.arch-outcome.contained p{color:#a1a1a6}
+.arch-outcome.escalated{
+  background:linear-gradient(135deg,var(--vm-blue) 0%,#003b73 100%);
+  color:var(--white);border-color:transparent;
+}
+.arch-outcome.escalated p{color:rgba(255,255,255,0.85)}
+.arch-outcome-flag{
+  font-size:10px;font-weight:600;letter-spacing:0.14em;
+  margin-bottom:10px;opacity:0.75;
+}
+.arch-outcome h5{
+  font-size:17px;font-weight:600;
+  margin-bottom:6px;letter-spacing:-0.012em;
+}
+.arch-outcome p{font-size:12px;line-height:1.45}
+@media (max-width:800px){
+  .arch-outcomes{grid-template-columns:1fr}
+  .arch-decision{min-width:0}
+}
+
+/* Legend */
+.arch-legend{
+  margin-top:clamp(40px,5vw,60px);
+  padding-top:32px;
+  border-top:1px solid rgba(0,0,0,0.08);
+  display:flex;flex-wrap:wrap;gap:24px;justify-content:center;
+  font-size:12px;color:var(--gray-500);
+}
+.arch-legend-item{display:flex;align-items:center;gap:8px}
+.arch-legend-item .lg-dot{width:8px;height:8px;border-radius:50%}
+
+/* =========================================================
+   PAGE 8 — TRACK PERFORMANCE
+   ========================================================= */
+.performance{
+  background:var(--black);color:var(--white);
+  padding:clamp(100px,14vw,180px) 22px;
+  position:relative;overflow:hidden;
+}
+.performance::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 15% 10%,rgba(0,94,184,0.22) 0%,transparent 45%),
+    radial-gradient(ellipse at 85% 90%,rgba(59,158,255,0.12) 0%,transparent 50%);
+  pointer-events:none;
+}
+.performance .section-inner{position:relative;z-index:2}
+.performance .section-head{
+  text-align:center;
+  max-width:820px;margin:0 auto clamp(56px,7vw,84px);
+}
+.performance .section-head h2{
+  background:linear-gradient(180deg,#fff 0%,#8E8E93 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.performance .section-head .lead{color:#a1a1a6;margin:18px auto 0}
+
+/* Metrics grid — 3 platform pillars */
+.perf-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.perf-card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:24px;
+  padding:32px;
+  position:relative;overflow:hidden;
+  transition:transform 0.5s var(--ease-apple),border-color 0.5s var(--ease-apple),background 0.5s var(--ease-apple);
+  display:flex;flex-direction:column;
+  min-height:420px;
+}
+.perf-card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(59,158,255,0.3);
+  background:rgba(255,255,255,0.06);
+}
+
+.perf-card.coming-soon{
+  background:linear-gradient(135deg,rgba(0,94,184,0.12) 0%,rgba(0,94,184,0.03) 100%);
+  border-color:rgba(0,94,184,0.25);
+}
+
+/* Platform badge (logo area) */
+.perf-platform{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:24px;
+  padding-bottom:24px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.perf-logo{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;letter-spacing:-0.02em;
+  flex-shrink:0;
+  color:#fff;
+}
+.perf-logo.ga{
+  background:linear-gradient(135deg,#F9AB00 0%,#E37400 100%);
+}
+.perf-logo.cw{
+  background:linear-gradient(135deg,#FF9900 0%,#cc6d00 100%);
+  color:#000;
+}
+.perf-logo.tb{
+  background:linear-gradient(135deg,#1F447E 0%,#0d2d5c 100%);
+}
+.perf-platform-name{
+  font-size:11px;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#a1a1a6;
+  margin-bottom:2px;
+}
+.perf-platform-tool{
+  font-size:16px;font-weight:600;letter-spacing:-0.01em;
+}
+
+.perf-card h3{
+  font-size:clamp(22px,2.4vw,28px);
+  font-weight:600;line-height:1.2;letter-spacing:-0.018em;
+  margin-bottom:12px;
+}
+.perf-card > p{
+  font-size:14px;line-height:1.55;color:#a1a1a6;
+  margin-bottom:24px;
+}
+
+/* Metric tags */
+.perf-tags{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-top:auto;
+}
+.perf-tag{
+  font-size:11px;font-weight:500;
+  padding:6px 12px;border-radius:999px;
+  background:rgba(255,255,255,0.06);
+  color:#d2d2d7;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+/* Coming soon ribbon */
+.perf-ribbon{
+  position:absolute;top:20px;right:20px;
+  font-size:10px;font-weight:600;letter-spacing:0.14em;
+  text-transform:uppercase;
+  padding:5px 10px;border-radius:6px;
+  background:rgba(59,158,255,0.15);
+  color:#3B9EFF;
+  border:1px solid rgba(59,158,255,0.3);
+}
+
+/* Contact callout inside CloudWatch card */
+.perf-contact{
+  display:flex;align-items:center;gap:10px;
+  margin-top:18px;
+  padding:12px 14px;
+  background:rgba(0,0,0,0.3);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;
+  font-size:12px;
+}
+.perf-contact-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3DB5A0 0%,#1d8574 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:600;color:#fff;
+  flex-shrink:0;
+  letter-spacing:-0.02em;
+}
+.perf-contact-info{line-height:1.3}
+.perf-contact-info strong{
+  display:block;color:#fff;font-weight:600;
+  font-size:12px;
+}
+.perf-contact-info span{color:#a1a1a6;font-size:11px}
+
+@media (max-width:900px){
+  .perf-grid{grid-template-columns:1fr;gap:14px}
+  .perf-card{min-height:0;padding:28px}
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+::selection{background:var(--vm-blue);color:var(--white)}
+</style>
+</head>
+<body>
+
+<!-- ================== NAV ================== -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#vision" class="nav-brand">Virgin Media <b>O2</b> · VA Strategy</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#vision">Vision</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#foundation">Foundation</a></li>
+      <li><a href="#impact">Impact</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#horizon">Horizon</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#performance">Performance</a></li>
+    </ul>
+    <a href="#horizon" class="nav-cta">Get the brief</a>
+    <button class="nav-mobile-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ================== PAGE 1 — VISION ================== -->
+<section class="vision dark-theme" id="vision">
+  <div class="vision-inner">
+    <div class="reveal"><div class="eyebrow">Executive Summary · 01</div></div>
+    <h1 class="reveal" data-delay="1">The Future<br/>of Connection.</h1>
+    <p class="vision-sub reveal" data-delay="2">
+      A decisive shift from conventional agent-led support
+      to an intelligent, digital-first experience.
+    </p>
+
+    <!-- 3D abstract orb -->
+    <div class="orb-wrap reveal" data-delay="3" aria-hidden="true">
+      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#3B9EFF" stop-opacity="1"/>
+            <stop offset="40%" stop-color="#005EB8" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#001a3d" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="sphere" cx="38%" cy="35%" r="70%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+            <stop offset="30%" stop-color="#3B9EFF" stop-opacity="0.7"/>
+            <stop offset="70%" stop-color="#005EB8" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#000814" stop-opacity="1"/>
+          </radialGradient>
+          <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#3B9EFF" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#3B9EFF" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#3B9EFF" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="blur1"><feGaussianBlur stdDeviation="1.2"/></filter>
+        </defs>
+
+        <!-- glow halo -->
+        <circle cx="300" cy="300" r="260" fill="url(#core)" opacity="0.5" class="orb-core"/>
+
+        <!-- outer orbit ring -->
+        <g class="orb-outer">
+          <ellipse cx="300" cy="300" rx="250" ry="70" fill="none" stroke="url(#ring)" stroke-width="1" opacity="0.6"/>
+          <circle cx="550" cy="300" r="4" fill="#3B9EFF"/>
+        </g>
+
+        <!-- mid orbit ring -->
+        <g class="orb-mid">
+          <ellipse cx="300" cy="300" rx="200" ry="200" fill="none" stroke="#3B9EFF" stroke-width="0.5" opacity="0.3" stroke-dasharray="2 6"/>
+          <ellipse cx="300" cy="300" rx="180" ry="52" fill="none" stroke="url(#ring)" stroke-width="1" opacity="0.5" transform="rotate(60 300 300)"/>
+          <circle cx="480" cy="300" r="3" fill="#ffffff"/>
+          <circle cx="120" cy="300" r="2" fill="#3B9EFF" opacity="0.7"/>
+        </g>
+
+        <!-- core sphere -->
+        <circle cx="300" cy="300" r="120" fill="url(#sphere)"/>
+        <!-- specular highlight -->
+        <ellipse cx="260" cy="250" rx="35" ry="22" fill="#ffffff" opacity="0.35" filter="url(#blur1)"/>
+        <ellipse cx="250" cy="245" rx="10" ry="6" fill="#ffffff" opacity="0.85"/>
+
+        <!-- small satellite nodes -->
+        <g class="orb-outer">
+          <circle cx="300" cy="60" r="3" fill="#ffffff" opacity="0.8"/>
+          <circle cx="540" cy="480" r="2.5" fill="#3B9EFF" opacity="0.7"/>
+          <circle cx="80" cy="420" r="2" fill="#ffffff" opacity="0.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Large content block -->
+    <div class="vision-copy reveal" data-delay="2">
+      <p class="big-text">
+        We are engineering a <em>seamless digital conversation</em> — where every query finds resolution instantly, every customer feels heard, and our agents are freed to focus on what matters most.
+      </p>
+    </div>
+  </div>
+
+  <div class="vision-scroll-cue">Scroll</div>
+</section>
+
+<!-- ================== PAGE 1.5 — THE TEAM ================== -->
+<section class="team" id="team">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="reveal"><div class="eyebrow">Conversational Commerce &amp; AI · 02</div></div>
+      <h2 class="h1 reveal" data-delay="1">The Team<br/>Behind the Shift.</h2>
+    </div>
+
+    <!-- Context intro -->
+    <div class="team-context reveal" data-delay="1">
+      <p>
+        Conversational AI is the use of online bots, virtual assistants, and conversational interfaces — WhatsApp, in-app, SMS — to facilitate transactions and interactions.
+      </p>
+      <p>
+        The result: a more convenient, engaging, and personalised shopping experience for customers, while reducing costs and increasing velocity to resolution.
+      </p>
+    </div>
+
+    <!-- Purpose statement -->
+    <div class="team-purpose reveal" data-delay="2">
+      <div class="team-purpose-label">◉ Our Purpose</div>
+      <div class="team-purpose-text">
+        Relentlessly drive towards <em>hyper-efficient, machine-led conversations</em> that resolve, personalise and perform.
+      </div>
+    </div>
+
+    <!-- Peer row — 4 Product Owners -->
+    <div class="team-layer-label reveal">Product Owners</div>
+
+    <div class="team-peers">
+      <article class="person reveal" data-delay="1">
+        <div class="person-avatar"><span class="initials">AC</span></div>
+        <div class="person-pill">Journeys</div>
+        <div class="person-name">Andrew Carpenter</div>
+        <div class="person-scope">Sales · Moves · Retain</div>
+      </article>
+
+      <article class="person reveal" data-delay="2">
+        <div class="person-avatar"><span class="initials">PE</span></div>
+        <div class="person-pill">Journeys</div>
+        <div class="person-name">Philip Ector</div>
+        <div class="person-scope">Care</div>
+      </article>
+
+      <article class="person reveal" data-delay="3">
+        <div class="person-avatar"><span class="initials">CM</span></div>
+        <div class="person-pill">Innovation</div>
+        <div class="person-name">Chris McQuade</div>
+        <div class="person-scope">Generative AI</div>
+      </article>
+
+      <article class="person reveal" data-delay="4">
+        <div class="person-avatar"><span class="initials">GL</span></div>
+        <div class="person-pill">Experience</div>
+        <div class="person-name">Gilda Leicer Avila</div>
+        <div class="person-scope">Customer Experience (VOC)</div>
+      </article>
+    </div>
+
+    <!-- Direct report — Josh under Gilda (4th column) -->
+    <div class="team-report-wrap">
+      <div class="team-report-slot"></div>
+      <div class="team-report-slot"></div>
+      <div class="team-report-slot"></div>
+      <div class="team-report-slot filled reveal" data-delay="2">
+        <article class="person report">
+          <div class="person-avatar"><span class="initials">JL</span></div>
+          <div class="person-pill">VOC Insight</div>
+          <div class="person-name">Josh Lloyd</div>
+          <div class="person-scope">Reports to Gilda</div>
+        </article>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================== PAGE 2 — FOUNDATION ================== -->
+<section class="foundation" id="foundation">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="reveal"><div class="eyebrow">Current Infrastructure · 03</div></div>
+      <h2 class="h1 reveal" data-delay="1">The Foundation.</h2>
+      <p class="lead reveal" data-delay="2">
+        A production-grade stack built on AWS, powering voice and chat touchpoints across the entire Virgin Media O2 customer journey.
+      </p>
+    </div>
+
+    <div class="bento">
+      <!-- Card 1 -->
+      <article class="bento-card card-1 reveal" data-delay="1">
+        <div>
+          <div class="card-tag">01 · Activation Layer</div>
+          <h3>AWS Connect.<br/>Voice &amp; chat, unified.</h3>
+          <p>The omnichannel entry point — routing every conversation across voice and digital channels into a single, intelligent pipeline.</p>
+        </div>
+        <div class="bento-visual" aria-hidden="true">
+          <div class="waveform">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="bento-card card-2 reveal" data-delay="2">
+        <div>
+          <div class="card-tag">02 · Core Engine</div>
+          <h3>Amazon Lex&nbsp;V2.<br/>Natural language understanding.</h3>
+          <p>Intent classification and slot-filling at scale — interpreting customer language the way people actually speak.</p>
+        </div>
+        <div class="bento-visual" aria-hidden="true">
+          <div class="tokens">
+            <span>"my"</span><span class="active">bill</span><span>is</span>
+            <span class="active">wrong</span><span>on</span><span>the</span>
+            <span class="active">latest</span><span>statement</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="bento-card card-3 reveal" data-delay="3">
+        <div>
+          <div class="card-tag">03 · Operational Intent</div>
+          <h3>The primary touchpoint<br/>for query resolution.</h3>
+          <p>End-to-end intent orchestration — from first utterance to confirmed resolution, with graceful fallbacks and human hand-off when needed.</p>
+        </div>
+        <div class="bento-visual" aria-hidden="true">
+          <div class="intent-flow">
+            <div class="intent-node">Customer<br/>Utterance</div>
+            <span class="intent-arrow">→</span>
+            <div class="intent-node">Intent<br/>Classification</div>
+            <span class="intent-arrow">→</span>
+            <div class="intent-node">Business<br/>Logic</div>
+            <span class="intent-arrow">→</span>
+            <div class="intent-node">Resolution</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 3 — IMPACT ================== -->
+<section class="impact dark-theme" id="impact">
+  <div class="impact-head">
+    <div class="reveal"><div class="eyebrow">Strategic Objectives · 04</div></div>
+    <h2 class="h1 reveal" data-delay="1">The Impact.</h2>
+    <p class="lead reveal" data-delay="2">
+      Two mandates, one platform. Operational efficiency for the business — and frictionless experience for the customer.
+    </p>
+  </div>
+
+  <div class="split">
+    <div class="split-side split-left">
+      <div class="reveal"><div class="split-tag">◐ Efficiency</div></div>
+      <h3 class="reveal" data-delay="1">Doing more<br/>with less.</h3>
+      <p class="reveal" data-delay="2">
+        Automating high-volume, predictable interactions to protect the cost base and redirect human effort toward complex, high-value conversations.
+      </p>
+      <ul class="metric-list">
+        <li class="metric reveal" data-delay="2">
+          <div class="metric-num">£M<span></span></div>
+          <div class="metric-label">
+            <strong>OPEX Avoidance</strong>
+            Measurable reduction in per-contact handling cost across voice and chat channels.
+          </div>
+        </li>
+        <li class="metric reveal" data-delay="3">
+          <div class="metric-num">−40<span>%</span></div>
+          <div class="metric-label">
+            <strong>Human Intervention Reduction</strong>
+            Fewer handoffs, shorter queues. Agents deployed only where they add real value.
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="split-side split-right">
+      <div class="reveal"><div class="split-tag">◑ Customer Experience</div></div>
+      <h3 class="reveal" data-delay="1">Always on.<br/>Always resolving.</h3>
+      <p class="reveal" data-delay="2">
+        Instant, accurate answers on the customer's terms — whenever they ask, on whichever channel they choose.
+      </p>
+      <ul class="metric-list">
+        <li class="metric reveal" data-delay="2">
+          <div class="metric-num">2.4<span>x</span></div>
+          <div class="metric-label">
+            <strong>Resolution Velocity</strong>
+            First-contact resolution accelerated — routing customers to the right answer without queue, hold, or transfer.
+          </div>
+        </li>
+        <li class="metric reveal" data-delay="3">
+          <div class="metric-num">24/7<span></span></div>
+          <div class="metric-label">
+            <strong>Customer Loyalty, around the clock</strong>
+            Service that never sleeps — building trust through unbroken availability and consistent quality.
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 4 — ROADMAP ================== -->
+<section class="roadmap" id="roadmap">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="reveal"><div class="eyebrow">Future Integration · 05</div></div>
+      <h2 class="h1 reveal" data-delay="1">The Roadmap.</h2>
+      <p class="lead reveal" data-delay="2">
+        A phased rollout through 2026 — each release unlocking a new capability layer, from measurement to reasoning to deployment velocity.
+      </p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-track" id="tlTrack"></div>
+      <div class="timeline-grid">
+
+        <article class="tl-card reveal" data-delay="1">
+          <span class="tl-dot"></span>
+          <div class="tl-body">
+            <div class="tl-quarter">Q1 · 2026</div>
+            <h4 class="tl-title">AWS Workbench</h4>
+            <p class="tl-desc">NLU efficacy measurement — a closed-loop system for evaluating, tuning, and validating model performance in production.</p>
+            <div class="tl-details">
+              <div class="tl-details-label">Integration Details</div>
+              <ul>
+                <li>Automated intent-accuracy scoring</li>
+                <li>Continuous confusion-matrix analysis</li>
+                <li>Regression testing across release cycles</li>
+                <li>Utterance-level drift detection</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="tl-card reveal" data-delay="2">
+          <span class="tl-dot"></span>
+          <div class="tl-body">
+            <div class="tl-quarter">Q2 · 2026</div>
+            <h4 class="tl-title">Assisted NLU &amp; Vertex AI</h4>
+            <p class="tl-desc">Semantic reasoning replaces rigid rule trees, with Vertex AI unlocking data accessibility across the knowledge base.</p>
+            <div class="tl-details">
+              <div class="tl-details-label">Integration Details</div>
+              <ul>
+                <li>LLM-backed semantic intent matching</li>
+                <li>Vertex AI grounding on proprietary data</li>
+                <li>Hybrid deterministic + generative routing</li>
+                <li>Real-time knowledge retrieval</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="tl-card reveal" data-delay="3">
+          <span class="tl-dot"></span>
+          <div class="tl-body">
+            <div class="tl-quarter">Q3 · 2026</div>
+            <h4 class="tl-title">CX Agent Studio</h4>
+            <p class="tl-desc">A low-code authoring surface that compresses time-to-production for new customer journeys from months to days.</p>
+            <div class="tl-details">
+              <div class="tl-details-label">Integration Details</div>
+              <ul>
+                <li>Visual conversation flow composer</li>
+                <li>Reusable intent &amp; slot libraries</li>
+                <li>Built-in A/B experimentation</li>
+                <li>Safe staged-release deployment</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 5 — HORIZON ================== -->
+<section class="horizon dark-theme" id="horizon">
+  <div class="horizon-inner">
+    <div class="horizon-hero">
+      <div class="reveal"><div class="eyebrow">Implementation Vision · 06</div></div>
+      <h2 class="reveal" data-delay="1">
+        Beyond Rules.
+        <span class="line2">Pure Reasoning.</span>
+      </h2>
+      <p class="lead reveal" data-delay="2">
+        The transition from rigid decision trees to true semantic understanding — powered by Assisted NLU and Large Language Models.
+      </p>
+    </div>
+
+    <div class="transition">
+      <div class="t-side reveal" data-delay="1">
+        <div class="t-label">From</div>
+        <h3 class="t-heading">Rule-based<br/>Processing</h3>
+        <p>Deterministic flows that require every pathway to be explicitly mapped. Precise, but brittle at the edges.</p>
+        <ul class="t-list">
+          <li>Exhaustive intent enumeration</li>
+          <li>Rigid slot-filling sequences</li>
+          <li>Manual fallback authoring</li>
+        </ul>
+      </div>
+
+      <div class="t-arrow reveal" data-delay="2" aria-hidden="true">→</div>
+
+      <div class="t-side t-new reveal" data-delay="3">
+        <div class="t-label">To</div>
+        <h3 class="t-heading">Semantic<br/>Reasoning</h3>
+        <p>LLM-grounded understanding that interprets intent from context, meaning, and history — not just matched phrases.</p>
+        <ul class="t-list">
+          <li>Context-aware interpretation</li>
+          <li>Dynamic knowledge retrieval</li>
+          <li>Generative, grounded responses</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 6 — ARCHITECTURE ================== -->
+<section class="architecture" id="architecture">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="reveal"><div class="eyebrow">Routing Architecture · 07</div></div>
+      <h2 class="h1 reveal" data-delay="1">How AWS knows<br/>where to send you.</h2>
+      <p class="lead reveal" data-delay="2" style="margin:20px auto 0">
+        A four-stage orchestration that transforms a raw customer interaction into a resolved conversation — inside the virtual assistant or handed to an agent.
+      </p>
+    </div>
+
+    <div class="arch-diagram">
+
+      <!-- ============ STAGE 1 — INTAKE ============ -->
+      <div class="reveal">
+        <div class="arch-stage">
+          <span class="arch-stage-num">STAGE 01</span>
+          <span class="arch-stage-title">Customer Intake &amp; Brand Detection</span>
+          <span class="arch-stage-sub">Identify the channel before anything else</span>
+        </div>
+        <div class="arch-intake">
+          <div class="arch-customer">
+            <div class="ac-icon">◉</div>
+            <h4>Customer Interaction</h4>
+            <p>Brand · VM / O2</p>
+          </div>
+          <div class="arch-flow-arrow">→</div>
+          <div class="arch-channels">
+            <div class="arch-channel" data-type="online">
+              <div class="ch-dot"></div>
+              <h5>Online Web</h5>
+              <p>Browser session with GTM script loaded</p>
+            </div>
+            <div class="arch-channel" data-type="app">
+              <div class="ch-dot"></div>
+              <h5>In-App</h5>
+              <p>Native SDK passes context directly</p>
+            </div>
+            <div class="arch-channel" data-type="proactive">
+              <div class="ch-dot"></div>
+              <h5>Proactive WA / SMS</h5>
+              <p>Amazon Connect · Esendex outbound</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ STAGE 2 — MASTER ROUTER ============ -->
+      <div class="reveal" data-delay="1">
+        <div class="arch-stage">
+          <span class="arch-stage-num">STAGE 02</span>
+          <span class="arch-stage-title">The Master Router via Google Tag Manager</span>
+          <span class="arch-stage-sub">URL pattern → entry point → widget script</span>
+        </div>
+
+        <div class="arch-router">
+          <div class="arch-router-head">
+            <div class="gtm-badge">GTM</div>
+            <div>
+              <h4>The Master Router</h4>
+              <p>Inspects the page URL, matches it against regex patterns, and injects the correct widget script for the customer's journey.</p>
+            </div>
+          </div>
+
+          <div class="arch-router-body">
+            <div class="arch-regex">
+              <div class="rx-label">How the match works</div>
+              <div class="rx-code">
+                <span class="rx-op">if</span> url <span class="rx-op">~=</span> <span class="rx-str">/retention/</span><br/>
+                &nbsp;&nbsp;→ inject <span class="rx-str">vm-retain.js</span><br/>
+                <span class="rx-op">elif</span> url <span class="rx-op">~=</span> <span class="rx-str">/movers/</span><br/>
+                &nbsp;&nbsp;→ resolve sub-route<br/>
+                <span class="rx-op">else</span> → <span class="rx-str">vm-sales.js</span>
+              </div>
+              <p class="arch-regex-note">GTM evaluates the URL hierarchy left-to-right. The first matching regex pattern determines which widget script loads into the DOM — each widget carries its own context payload and routing keys.</p>
+            </div>
+
+            <div class="arch-entries">
+              <div class="arch-entry">
+                <div class="arch-entry-num">01</div>
+                <h5>New Acquisition</h5>
+                <div class="widget">vm-sales.js</div>
+              </div>
+              <div class="arch-entry">
+                <div class="arch-entry-num">02</div>
+                <h5>Consumer Processing</h5>
+                <div class="widget">vm-consumer.js</div>
+              </div>
+              <div class="arch-entry">
+                <div class="arch-entry-num">03</div>
+                <h5>Retention</h5>
+                <div class="widget">vm-retain.js</div>
+              </div>
+              <div class="arch-entry">
+                <div class="arch-entry-num">04</div>
+                <h5>Essential Broadband</h5>
+                <div class="widget">vm-ebb.js</div>
+              </div>
+              <div class="arch-entry">
+                <div class="arch-entry-num">05</div>
+                <h5>Ccentric</h5>
+                <div class="widget">vm-ccentric.js</div>
+              </div>
+              <div class="arch-entry">
+                <div class="arch-entry-num">06</div>
+                <h5>Movers · Default</h5>
+                <div class="widget">vm-default.js</div>
+              </div>
+              <div class="arch-entry nested">
+                <div class="arch-entry-num">06a</div>
+                <h5>Movers · Student</h5>
+                <div class="widget">vm-movers-student.js</div>
+              </div>
+              <div class="arch-entry nested">
+                <div class="arch-entry-num">06b</div>
+                <h5>Movers · Serviceable</h5>
+                <div class="widget">vm-movers-serv.js</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ STAGE 3 — PIPELINE ============ -->
+      <div class="reveal" data-delay="1">
+        <div class="arch-stage">
+          <span class="arch-stage-num">STAGE 03</span>
+          <span class="arch-stage-title">Authentication &amp; Orchestration Pipeline</span>
+          <span class="arch-stage-sub">Session check → API Gateway → Connect → Lex</span>
+        </div>
+        <div class="arch-pipeline">
+          <div class="arch-pipe-step">
+            <div class="arch-pipe-num">01 · SESSION</div>
+            <h5>Session Check</h5>
+            <p>Is an active AWS session cookie already set for this user?</p>
+            <code>aws-session-id</code>
+          </div>
+          <div class="arch-pipe-step">
+            <div class="arch-pipe-num">02 · GATEWAY</div>
+            <h5>Amazon API Gateway</h5>
+            <p>JWT authorizes the connection and binds contact attributes to the session.</p>
+            <code>POST /v1/chat/orchestration</code>
+          </div>
+          <div class="arch-pipe-step">
+            <div class="arch-pipe-num">03 · TRIAGE</div>
+            <h5>Amazon Connect</h5>
+            <p>Triage contact flow receives the interaction and prepares it for NLU processing.</p>
+            <code>contact-attributes</code>
+          </div>
+          <div class="arch-pipe-step">
+            <div class="arch-pipe-num">04 · NLU</div>
+            <h5>Amazon Lex</h5>
+            <p>Classifies intent from the customer's utterance. Passes resolved intent to the queue module.</p>
+            <code>intent.identify()</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ STAGE 4 — OUTCOMES ============ -->
+      <div class="reveal" data-delay="1">
+        <div class="arch-stage">
+          <span class="arch-stage-num">STAGE 04</span>
+          <span class="arch-stage-title">Resolution &amp; Escalation Decision</span>
+          <span class="arch-stage-sub">Contained by VA — or handed to a human agent</span>
+        </div>
+        <div class="arch-outcomes">
+          <div class="arch-outcome contained">
+            <div class="arch-outcome-flag">◉ NO ESCALATION</div>
+            <h5>VA Contained</h5>
+            <p>Intent resolved autonomously within the virtual assistant. Interaction ends — no human touch required.</p>
+          </div>
+          <div class="arch-decision">
+            <div class="dec-label">Decision Point</div>
+            <h5>Agent Escalation<br/>Required?</h5>
+          </div>
+          <div class="arch-outcome escalated">
+            <div class="arch-outcome-flag">◉ YES · ROUTE</div>
+            <h5>Omningage Handoff</h5>
+            <p>Full conversation context transferred to live agent via Omningage — no repetition, no dropped state.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="arch-legend">
+      <div class="arch-legend-item"><span class="lg-dot" style="background:var(--vm-blue)"></span>Web / Browser channel</div>
+      <div class="arch-legend-item"><span class="lg-dot" style="background:#34C759"></span>In-App channel</div>
+      <div class="arch-legend-item"><span class="lg-dot" style="background:#FF9500"></span>Proactive outbound (WA / SMS)</div>
+      <div class="arch-legend-item"><span class="lg-dot" style="background:var(--black)"></span>Contained resolution</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== PAGE 8 — TRACK PERFORMANCE ================== -->
+<section class="performance dark-theme" id="performance">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="reveal"><div class="eyebrow">Measurement Stack · 08</div></div>
+      <h2 class="h1 reveal" data-delay="1">Track Performance.</h2>
+      <p class="lead reveal" data-delay="2">
+        Three platforms, three lenses on the same story — traffic, containment, and downstream impact. Measured end-to-end, from first click to business outcome.
+      </p>
+    </div>
+
+    <div class="perf-grid">
+
+      <!-- Google Analytics -->
+      <article class="perf-card reveal" data-delay="1">
+        <div class="perf-platform">
+          <div class="perf-logo ga">GA4</div>
+          <div>
+            <div class="perf-platform-name">Platform · 01</div>
+            <div class="perf-platform-tool">Google Analytics</div>
+          </div>
+        </div>
+        <h3>Volume, revenue &amp; URL tracking.</h3>
+        <p>Every session, every entry point, every conversion. GA4 owns the top-of-funnel view — from which URL triggered which widget to the revenue it generated.</p>
+        <div class="perf-tags">
+          <span class="perf-tag">Session Volume</span>
+          <span class="perf-tag">Revenue Attribution</span>
+          <span class="perf-tag">URL Pathing</span>
+          <span class="perf-tag">Widget Triggers</span>
+        </div>
+      </article>
+
+      <!-- AWS CloudWatch -->
+      <article class="perf-card reveal" data-delay="2">
+        <div class="perf-platform">
+          <div class="perf-logo cw">CW</div>
+          <div>
+            <div class="perf-platform-name">Platform · 02</div>
+            <div class="perf-platform-tool">AWS CloudWatch</div>
+          </div>
+        </div>
+        <h3>Containment rate reporting.</h3>
+        <p>The single source of truth for how many conversations the VA resolves on its own — directly surfaced from the Amazon Connect and Lex pipeline.</p>
+        <div class="perf-tags">
+          <span class="perf-tag">Contain Rate</span>
+          <span class="perf-tag">Intent Resolution</span>
+          <span class="perf-tag">Escalation Ratios</span>
+        </div>
+        <div class="perf-contact">
+          <div class="perf-contact-avatar">JL</div>
+          <div class="perf-contact-info">
+            <strong>Josh Lloyd</strong>
+            <span>Available on request · VOC Insight</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tableau (Coming Soon) -->
+      <article class="perf-card coming-soon reveal" data-delay="3">
+        <div class="perf-ribbon">Coming Soon</div>
+        <div class="perf-platform">
+          <div class="perf-logo tb">T</div>
+          <div>
+            <div class="perf-platform-name">Platform · 03</div>
+            <div class="perf-platform-tool">Tableau</div>
+          </div>
+        </div>
+        <h3>Downstream performance.</h3>
+        <p>The full-funnel view — connecting VA interactions to what happens next. Retention, repeat contact, resolution quality, and business impact.</p>
+        <div class="perf-tags">
+          <span class="perf-tag">Downstream Impact</span>
+          <span class="perf-tag">Repeat Contact</span>
+          <span class="perf-tag">Resolution Quality</span>
+          <span class="perf-tag">Cohort Analysis</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================== FOOTER ================== -->
+<section class="horizon dark-theme" id="closing" style="padding-top:clamp(80px,10vw,120px)">
+  <div class="horizon-inner">
+    <div class="footer-statement" style="border-top:none;padding-top:0">
+      <div class="stamp reveal">— The Horizon —</div>
+      <h3 class="reveal" data-delay="1">
+        Leading the edge<br/>
+        of digital customer<br/>
+        service innovation.
+      </h3>
+      <div class="footer-meta">
+        <div class="vm-mark">Virgin Media <b>O2</b> · Virtual Assistant Strategy 2026</div>
+        <div>Prepared for Executive Review</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* =========================================================
+   SCROLL REVEAL — IntersectionObserver
+   ========================================================= */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:0.14,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* =========================================================
+   NAV — theme switch over dark sections + shadow on scroll
+   ========================================================= */
+const nav = document.getElementById('nav');
+const darkSections = document.querySelectorAll('.dark-theme');
+
+function updateNavTheme(){
+  const navCenter = window.innerHeight * 0.1;
+  let onDark = false;
+  darkSections.forEach(s => {
+    const r = s.getBoundingClientRect();
+    if(r.top <= navCenter && r.bottom >= navCenter) onDark = true;
+  });
+  nav.classList.toggle('dark', onDark);
+}
+window.addEventListener('scroll', updateNavTheme, {passive:true});
+updateNavTheme();
+
+/* =========================================================
+   SCROLL SPY — highlight current section in nav
+   Also hijacks anchor clicks to use JS scroll (works in sandboxed iframes)
+   ========================================================= */
+const navLinkEls = document.querySelectorAll('.nav-links a, .nav-brand, .nav-cta');
+const sectionEls = [...document.querySelectorAll('.nav-links a')]
+  .map(a => document.querySelector(a.getAttribute('href')))
+  .filter(Boolean);
+
+// Hijack every in-page anchor click — prevents iframe URL navigation
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const targetId = link.getAttribute('href');
+    if(!targetId || targetId === '#') return;
+    const target = document.querySelector(targetId);
+    if(!target) return;
+    e.preventDefault();
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 52;
+    const y = target.getBoundingClientRect().top + window.pageYOffset - navH;
+    window.scrollTo({top:y, behavior:'smooth'});
+  });
+});
+
+function updateActiveLink(){
+  const pos = window.scrollY + window.innerHeight * 0.3;
+  let current = sectionEls[0];
+  sectionEls.forEach(s => {
+    if(s.offsetTop <= pos) current = s;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current.id);
+  });
+}
+window.addEventListener('scroll', updateActiveLink, {passive:true});
+updateActiveLink();
+
+/* =========================================================
+   MOBILE NAV
+   ========================================================= */
+const toggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+toggle.addEventListener('click', () => {
+  toggle.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    toggle.classList.remove('open');
+    navLinks.classList.remove('open');
+  });
+});
+
+/* =========================================================
+   TIMELINE PROGRESS LINE
+   ========================================================= */
+const track = document.getElementById('tlTrack');
+const roadmap = document.getElementById('roadmap');
+function updateTrack(){
+  if(!track) return;
+  const r = roadmap.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const start = vh * 0.6;
+  const end = -r.height * 0.4;
+  const p = Math.max(0, Math.min(1, (start - r.top) / (start - end)));
+  track.style.setProperty('--progress', (p * 100) + '%');
+}
+window.addEventListener('scroll', updateTrack, {passive:true});
+window.addEventListener('resize', updateTrack);
+updateTrack();
+</script>
+</body>
+</html>
