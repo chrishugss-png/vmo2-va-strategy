@@ -907,6 +907,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 
 /* Engagement form CTA */
 .team-engage{
+  scroll-margin-top:calc(var(--nav-h) + 24px);
   margin-top:clamp(72px,9vw,110px);
   background:linear-gradient(135deg,var(--vm-blue) 0%,#003b73 100%);
   border-radius:28px;
@@ -1480,7 +1481,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       <li><a href="#architecture">Architecture</a></li>
       <li><a href="#performance">Performance</a></li>
     </ul>
-    <a href="#horizon" class="nav-cta">Get the brief</a>
+    <a href="#engage" class="nav-cta">Engage</a>
     <button class="nav-mobile-toggle" id="navToggle" aria-label="Menu">
       <span></span><span></span>
     </button>
@@ -1652,7 +1653,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
     </div>
 
     <!-- Engagement Form CTA -->
-    <div class="team-engage reveal" data-delay="1">
+    <div class="team-engage reveal" data-delay="1" id="engage">
       <div class="team-engage-content">
         <div class="team-engage-label">◉ Work with us</div>
         <h4>Ready to engage the team?</h4>
