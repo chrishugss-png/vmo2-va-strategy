@@ -1459,6 +1459,72 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   .perf-card{min-height:0;padding:28px}
 }
 
+/* Live demo callout inside Architecture */
+.arch-demo{
+  margin-top:clamp(40px,5vw,60px);
+  padding:clamp(28px,3.5vw,44px);
+  background:linear-gradient(135deg,#000 0%,#1a1a1a 100%);
+  border-radius:22px;
+  color:var(--white);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:clamp(20px,3vw,40px);
+  align-items:center;
+  position:relative;overflow:hidden;
+}
+.arch-demo::before{
+  content:"";position:absolute;
+  top:-40%;right:-10%;width:360px;height:360px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,94,184,0.3) 0%,transparent 65%);
+  pointer-events:none;
+}
+.arch-demo-content{position:relative;z-index:1}
+.arch-demo-label{
+  font-size:11px;font-weight:600;letter-spacing:0.22em;
+  text-transform:uppercase;color:#3B9EFF;
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:10px;
+}
+.arch-demo-label::before{
+  content:"";width:8px;height:8px;border-radius:50%;
+  background:#34C759;
+  box-shadow:0 0 0 4px rgba(52,199,89,0.18);
+  animation:pulse-live 2s ease-in-out infinite;
+}
+@keyframes pulse-live{
+  0%,100%{box-shadow:0 0 0 4px rgba(52,199,89,0.18)}
+  50%{box-shadow:0 0 0 8px rgba(52,199,89,0.04)}
+}
+.arch-demo h4{
+  font-size:clamp(22px,2.6vw,30px);
+  font-weight:600;line-height:1.2;letter-spacing:-0.02em;
+  margin-bottom:8px;
+  max-width:560px;
+}
+.arch-demo p{
+  font-size:14px;line-height:1.5;color:#a1a1a6;
+  max-width:540px;
+}
+.arch-demo-btn{
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 24px;border-radius:999px;
+  background:var(--vm-blue);
+  color:var(--white);
+  font-size:14px;font-weight:600;letter-spacing:-0.005em;
+  transition:transform 0.3s var(--ease-apple),background 0.3s var(--ease-apple),box-shadow 0.3s var(--ease-apple);
+  white-space:nowrap;cursor:pointer;
+}
+.arch-demo-btn:hover{
+  background:#0072dc;
+  transform:translateY(-2px);
+  box-shadow:0 14px 32px -8px rgba(0,94,184,0.5);
+}
+@media (max-width:700px){
+  .arch-demo{grid-template-columns:1fr}
+  .arch-demo-btn{justify-self:start}
+}
+
 /* =========================================================
    SELECTION
    ========================================================= */
@@ -2103,6 +2169,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       <div class="arch-legend-item"><span class="lg-dot" style="background:#FF9500"></span>Proactive outbound (WA / SMS)</div>
       <div class="arch-legend-item"><span class="lg-dot" style="background:var(--black)"></span>Contained resolution</div>
     </div>
+
+    <!-- Live demo callout -->
+    <div class="arch-demo reveal">
+      <div class="arch-demo-content">
+        <div class="arch-demo-label">Live Demo · Test Environment</div>
+        <h4>See the architecture in action.</h4>
+        <p>Launch the live Amazon Connect widget to experience the end-to-end flow — GTM routing, WAF authentication, Lex intent classification, and agent handoff.</p>
+      </div>
+      <button class="arch-demo-btn OpenVMChat" type="button" aria-label="Launch live chat widget">
+        Launch chat widget
+        <span>→</span>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -2307,5 +2386,435 @@ window.addEventListener('scroll', updateTrack, {passive:true});
 window.addEventListener('resize', updateTrack);
 updateTrack();
 </script>
+
+<!-- =========================================================
+     AWS Connect Chat Widget — VM O2 (Test Environment)
+     Loads the production-style widget loader. On this microsite the
+     URL-based auto-trigger won't fire (domain doesn't match VM URLs),
+     so the widget only launches via explicit .OpenVMChat click triggers.
+     ========================================================= -->
+<script>
+try {
+
+  // setup config for api endpoints & chat interface client js files
+  var aws_connect = {
+      awsApiGateway: "https://fer0osb9kg.execute-api.eu-west-2.amazonaws.com/dev/",
+      awsWAPIntegration:"https://5e96a17372f3.eu-west-2.sdk.awswaf.com/5e96a17372f3/17d3e9dab293/challenge.js",
+      chatInterfaceJs: "https://d2zasqxhmd6ne4.cloudfront.net/amazon-connect-chat-interface-client.js",
+  css_selectors: '.OpenVMChat,.OpenVMChat *, .openChatWindow, .openChatWindow *, #driveway1,#driveway2,#\\31man2manV1,#essentialBB,#lpButtonMovers3,#lpButtonMovers4,#lpButtonMovers,#lpButtonMovers2,#lpButton-stubot1,#lpButton-stubot2,#lpButton-stubot3,#o2-virtual-assistant-contact-us,#Williams,#rententions1,#lpButton-exceptions,#faultsbuttonnew,#lpButton-contactus,#challengerCare,#challengercare2LiveChat,#wifi-pods-journey1,#activationFailed,#challengerTVfault21,#DNaddtobill,#DNaddtobill2,#challengercare1LiveChat',
+
+
+  customizationObject: {
+        header: {
+            dropdown: true,
+            dynamicHeader: false,
+        },
+        transcript: {
+            hideDisplayNames: false,
+            eventNames: {
+                customer: "Customer",
+            },
+            displayIcons: true,
+            iconSources: {
+                botMessage: "https://prod.ctassets.virginmedia.com/uploads/dotcom_images_corporate_media_centre_press_releases_vm_logo_red_760_570_e956c2da0a.jpg",
+                systemMessage: "https://prod.ctassets.virginmedia.com/uploads/footer_logo_287c9d4656.png",
+                agentMessage: "https://prod.ctassets.virginmedia.com/uploads/footer_logo_287c9d4656.png",
+            },
+        },
+        footer: {
+            disabled: true
+        }
+  },
+
+  customStyles: {
+    global: {
+        frameWidth: '338px',
+        frameHeight: '700px',
+        textColor: '#OOOOO',
+        fontSize: '12px',
+        footerHeight: '60px',
+    },
+    header: {
+    headerFontSize: '10px',
+        headerTextColor: '#FFFFF',
+    },
+    transcript: {
+        messageFontSize: '13px',
+        messageTextColor: '#FFFFF'
+    }
+  },
+
+  widgets : {
+        'VM_Master_Widget': {
+          'widgetID': 'edc39e5c-240c-4584-96ca-1ddf4c021a42',
+    'snippetID': 'QVFJREFIaCtFalN0ZDVNdVlGRUhSSWxuYkZIVi9vOWJuK3J1RHFLMnREVloybXpFTVFGeElSQjI0Q0k2emJBSHBucHVxcVV0QUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNS1RHUUwwL2RDSS9ValQ2U0FnRVFnQ3R5c2JSSm1oWGl3YWM4MVgyQ1prRE4wRzE3ZUpob0JlUmtHc05HVHBaMFowN3U5WkRnYmlWWllTN2I6OkQ3VnhLYi80MmtOWFd5V0cxSHpwOTVtUkUxNDlReUZGL0FpVThlbGZINkFWTERhdk41aVpEN0xpMEQyMEpTN0pGN1VBbndib0tBQjNrLzlaanNIWXFhbGtZVWtwbWx1WHNScGthRzJhY3VGMXFOZ0J2UEQrUlZaR0pGTGZvb2I5aHNMYlBkZEVCSUNvblhWQmRIaXZ6YjUvWGJhaUo2ND0='
+  },
+  'MSG_MoversServiceable': {
+          'widgetID': '9b073f4c-48f6-4616-b684-9369bb19ea07',
+    'snippetID': 'QVFJREFIaCtFalN0ZDVNdVlGRUhSSWxuYkZIVi9vOWJuK3J1RHFLMnREVloybXpFTVFHcjhRUUkwOFVZUmoxYld5WkdVRVBqQUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNL0dLazB3cklaL0R0U014N0FnRVFnQ3NOemVLT0pzU3NobHJ6anBJR0hPTThieldSWVY3d0h6YS9tR3RtUzlHM2xWcXNsQW9kWkhWU3NybTQ6OlB0dk16MlQwbEJ5bmxaTXloamIwTlp1RG81VEx2TVhvWTNFUHBQT1ovNlBBUUU2enVXa3c0WEhaMnVTeFpPZ0IrcXJGYzVjMzVXR3MzWlE0WFdmYm1XakQrNWhpVnpYYnY2L3JQMkV0NHBJNi9IVHRwZXd4QzVKNjhpQlc1MUJFRmt5d21paHpEYzNXM2xMc3ZrVlVyQmJkTGNFOFZZND0='
+  } ,
+  'DigitalOffsite': {
+          'widgetID': '854b421d-ef78-464a-8835-cc63fc2267ca',
+    'snippetID': 'QVFJREFIajZXQjcyUXcrNFBEZVZpU0tIdzdFSjJTRnF3a2E2WXVITnhwS1FrcWpBd1FGSzJxaWlVeCt4dTE4NTZRMmpDazlTQUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNQWZGRlNwQXlHbVpYaG5URUFnRVFnQ3RpQ2VVTWgvanVOTDc0TFNCRC80T3J4ckRxQTRMcGhmeHZocG1IajVyYnFTSGVlK2ZPL0ZidEV0M3Y6OkpZODFZMm8zSjM5Y04vSFJiNXFVUi9RaGtXU2FVV1VPMnZPLzlHSVFSWjJnZTh5OUNwTmk5OXhuK2Q3QS9DeTZsS3BETVYvYUx0a3BwVHd6RmRVL3NmMDhxYnRDdXpkZVpyVU1hUFZ1TDZ2R1JjMVc5bCtqV3kxSlJqYlJwVUt2Rm0wa24wV0Mwai82Vk5lL2p3S2srRWNMSFVHR0JiTT0='
+  }
+
+    },
+  config : {
+        urls: [
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/leaving.+lp_offsite\=.+campaignId.+\:4570255250', 'forceOpen': true},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/support\/help\/moving-home\/leaving', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/ending-contract', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/support\/help\/retention', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/cancel-virgin-media', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/leaving', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/.+lp_offsite\=.+campaignId.+\:3719002550', 'forceOpen': true},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/myvmo2\/existing-customer\.+lp_offsite\=.+campaignId.+\:3719002550', 'forceOpen': true},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/support\/help\/contact-us\.+lp_offsite\=.+campaignId.+\:868043632', 'forceOpen': true},
+            {'siteID': 'DigitalOffsite', 'exact_match': true, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help.+lp_offsite\=.+campaignId.+\:4148102250', 'forceOpen': true},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/my-virgin-media\/your-package\/learnmore', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/support\/help\/moving-home\/students', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/moving-home\/students', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia.com\/support\/help\/moving-home\/move-serviceable', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/moving-home\/move-unserviceable', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/moving-home', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/preparingyourhome', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www.virginmedia\.com\/broadband\/low-income-families', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/broadband\/network-expansion', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/buy.+', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/join.+', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https:\/\/www\.virginmedia\.com\/broadband\/speed-test', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https:\/\/www\.virginmedia\.com\/broadband(?!\/existing-o2\\b).*', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': true, 'match_string': 'https://www.virginmedia.com/help/prepareforinstall?utm_source=braze&utm_medium=sms&utm_campaign=cable_cus_sms_52007_1Man2Man_Improvement_Trial_Day_X_Query', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'https\:\/\/www\.virginmedia\.com\/help\/prepareforinstall', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/support\/help\/change-my-package\/my-current-package\/customer-exclusion', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/support\/help\/change-my-package\/my-current-package\/error', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/support\/help\/billing-and-payment\/my-virgin-media\/billing', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/how-to\/quickstart\/activation-failed', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/support\/help\/check-services\/diagnostics-outcomes', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/my-virgin-media', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/live-chat', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/how-to\/guides\/tv\/pairing-the-remote\/360\/order-remote', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/how-to\/guides\/tv\/remote-not-working\/stream\/order-remote', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/how-to\/account\/complete-tv-360-order', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/how-to\/guides\/tv/pairing-the-remote\/stream\/order-remote', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/how-to\/guides\/tv\/remote-not-working\/360\/order-remote', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/changing-your-package', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/support\/help\/check-services\/diagnostics\/d0a\/contact-us', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/how-to\/quickstart\/activation-failed', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/billing-and-payment\/make-a-payment', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/billing-and-payment\/my-virgin-media\/collections\/pay-now-ivr', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/help\/complaints', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': '^https\:\/\/www\.virginmedia\.com\/tv\/virgin-tv-360', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'whoosh', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'int', 'forceOpen': false},
+            {'siteID': 'DigitalOffsite', 'exact_match': false, 'match_string': 'chrishugss', 'forceOpen': false},
+        ],
+
+        css_selectors: {
+              '1man2manV1': {'siteID': 'DigitalOffsite'},
+              'challengercare2LiveChat': {'siteID': 'DigitalOffsite'},
+              'driveway1': {'siteID': 'DigitalOffsite'},
+              'driveway2': {'siteID': 'DigitalOffsite'},
+              'essentialBB': {'siteID': 'DigitalOffsite'},
+              'faultsbuttonnew': {'siteID': 'DigitalOffsite'},
+              'lpButton-contactus': {'siteID': 'DigitalOffsite'},
+              'live-chat': {'siteID': 'DigitalOffsite'},
+              'lpButtonMovers': {'siteID': 'DigitalOffsite'},
+              'lpButtonMovers2': {'siteID': 'DigitalOffsite'},
+              'lpButtonMovers4': {'siteID': 'DigitalOffsite'},
+              'lpButton-movers-serviceable': {'siteID': 'DigitalOffsite'},
+              'lpButtonMovers3': {'siteID': 'DigitalOffsite'},
+              'lpButton-stubot1': {'siteID': 'DigitalOffsite'},
+              'lpButton-stubot2': {'siteID': 'DigitalOffsite'},
+              'lpButton-stubot3': {'siteID': 'DigitalOffsite'},
+              'MSG_Uniphore': {'siteID': 'MSG_Uniphore'},
+              'rententions1': {'siteID': 'DigitalOffsite'},
+              'wifi-pods-journey1': {'siteID': 'DigitalOffsite'},
+        }
+    },
+
+    generateGUID: function() {
+      var part = function() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+      }
+      return part() + part() + '-' + part() + '-' + part() + '-' + part() + '-' + part() + part() + part();
+    },
+
+    generateTimestamp: function() {
+        return new Date().toISOString();
+    },
+
+    getCookieValue: function(cname) {
+        var regex = new RegExp("(^| )" + cname + "=([^;]+)");
+        var cvalue = document.cookie.match(regex);
+        if (cvalue) { return cvalue[2]; }
+    },
+
+    setCookie: function(cname, cvalue, seconds) {
+        var cookieString = cname + "=" + cvalue + ";path=/";
+        if (seconds !== undefined) {
+            cookieString += ";max-age=" + seconds;
+        }
+        document.cookie = cookieString;
+    },
+
+    getAWSConnectOpenParam: function(url) {
+      var parser = document.createElement('a');
+      parser.href = url;
+      var query = parser.search.substring(1);
+      var vars = query.split('&');
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) === 'aws_connect_open') {
+          return decodeURIComponent(pair[1]);
+        }
+      }
+      return null;
+    },
+
+    loadWafIntegration: function() {
+        return new Promise(function(resolve, reject) {
+            var s = document.createElement("script");
+            s.src = aws_connect.awsWAPIntegration;
+            s.defer = true;
+            s.onload = resolve;
+            s.onerror = reject;
+            document.getElementsByTagName("head")[0].appendChild(s);
+        });
+    },
+
+    getConfigFromURL: function (config, currentURL) {
+      for (var i = 0; i < config.urls.length; i++) {
+          var url_config = config.urls[i];
+          var matchString = url_config.match_string;
+          var exactMatch = url_config.exact_match;
+          if (exactMatch) {
+            if (currentURL === matchString) { return url_config; }
+          } else {
+            var regex = new RegExp(matchString);
+            if (regex.test(currentURL)) { return url_config; }
+          }
+        }
+      return undefined;
+    },
+
+    getAwsChatHeaders: function(token) {
+        var awsChatHeaders = new Headers();
+        awsChatHeaders.append("X-Aws-Waf-Token", token);
+        awsChatHeaders.append('RequestID', aws_connect.generateGUID());
+        awsChatHeaders.append("RequestTimestamp", aws_connect.generateTimestamp());
+        awsChatHeaders.append("Content-Type", "application/json");
+        return awsChatHeaders;
+    },
+
+    orchestrateSession: function(siteId, authenticateTokenCallback) {
+        if (typeof AwsWafIntegration === 'undefined' || typeof AwsWafIntegration.getToken !== 'function') {
+            this.loadWafIntegration().then(function() {
+                aws_connect.orchestrateSessionAfterIntegrationLoaded(siteId, authenticateTokenCallback);
+            }).catch(function(error) {
+                console.error('Error loading AWS WAF integration:', error);
+            });
+        } else {
+            aws_connect.orchestrateSessionAfterIntegrationLoaded(siteId, authenticateTokenCallback);
+        }
+    },
+
+    orchestrateSessionAfterIntegrationLoaded: function(siteId, authenticateTokenCallback) {
+        var fetchUrl = aws_connect.awsApiGateway + "v1/chat/orchestration";
+        AwsWafIntegration.getToken().then(function(token) {
+        var headers = aws_connect.getAwsChatHeaders(token);
+        var payload = JSON.stringify(aws_connect.removeUndefinedKeys({
+            siteId: siteId,
+            sessionId: aws_connect.getCookieValue("awschat_sessionId")
+        }));
+        var requestOptions = { method: 'POST', headers: headers, body: payload };
+        fetch(fetchUrl, requestOptions)
+            .then(function(response) {
+                if (!response.ok) { throw new Error('AWS Connect: Network response was not ok'); }
+                return response.json();
+            })
+            .then(function(response) {
+                console.log('AWS Connect: Response data:', response);
+                if (response.jwtToken && response.ttl) {
+                    aws_connect.setCookie("awschat_jwtToken", response.jwtToken, response.ttl);
+                }
+                if (response.sessionId && response.ttl) {
+                    aws_connect.setCookie("awschat_sessionId", response.sessionId, response.ttl);
+                }
+                authenticateTokenCallback(response.jwtToken);
+                aws_connect.sendAwsChatAttributes(aws_connect);
+            });
+        });
+    },
+
+    getVisitorAttributes: function() {
+      var ua = navigator.userAgent;
+      return {
+          device: aws_connect.getDeviceInfo(ua),
+          operatingSystem: aws_connect.getOSInfo(ua),
+          browser: aws_connect.getBrowserInfo(ua),
+          startPage: aws_connect.getStartPage(),
+          source: "WEB"
+      };
+    },
+
+    getDeviceInfo: function(ua) {
+      if (/Mobi|Android/i.test(ua)) { return "Mobile"; }
+      else if (/Tablet|iPad/i.test(ua)) { return "Tablet"; }
+      else { return "Desktop"; }
+    },
+
+    getOSInfo: function(ua) {
+      if (/Windows NT 10.0/i.test(ua)) { return "Windows 10"; }
+      else if (/Windows NT 6.3/i.test(ua)) { return "Windows 8.1"; }
+      else if (/Windows NT 6.2/i.test(ua)) { return "Windows 8"; }
+      else if (/Windows NT 6.1/i.test(ua)) { return "Windows 7"; }
+      else if (/Mac OS X 10[._]15/i.test(ua)) { return "macOS Catalina"; }
+      else if (/Mac OS X 10[._]14/i.test(ua)) { return "macOS Mojave"; }
+      else if (/Mac OS X 10[._]13/i.test(ua)) { return "macOS High Sierra"; }
+      else if (/Android/i.test(ua)) { return "Android"; }
+      else if (/iPhone|iPad|iPod/i.test(ua)) { return "iOS"; }
+      return "Unknown OS";
+    },
+
+    getBrowserInfo: function(ua) {
+      if (/Chrome/i.test(ua) && !/Edge|OPR/i.test(ua)) { return "Chrome"; }
+      else if (/Safari/i.test(ua) && !/Chrome|OPR|Edge/i.test(ua)) { return "Safari"; }
+      else if (/Firefox/i.test(ua)) { return "Firefox"; }
+      else if (/MSIE|Trident/i.test(ua)) { return "Internet Explorer"; }
+      else if (/Edge/i.test(ua)) { return "Edge"; }
+      else if (/OPR/i.test(ua)) { return "Opera"; }
+      return "Unknown Browser";
+    },
+
+    getStartPage: function() {
+      if (!aws_connect.getCookieValue('start_page')) {
+        aws_connect.setCookie('start_page', document.URL);
+      }
+      return aws_connect.getCookieValue('start_page');
+    },
+
+    removeUndefinedKeys: function(data) {
+      if (data) {
+        return JSON.parse(JSON.stringify(data), function(key, value) {
+          return value === null || value === '' ? undefined : value;
+        });
+      }
+    },
+
+    sendAwsChatAttributes: function() {
+      AwsWafIntegration.getToken().then(function(token) {
+      var awschat_sessionId = aws_connect.getCookieValue("awschat_sessionId");
+      var awschat_access_token = sessionStorage.getItem('access_token');
+      if (awschat_sessionId == null) { return false; }
+      var awsChatHeaders = aws_connect.getAwsChatHeaders(token);
+      var payload = JSON.stringify(aws_connect.removeUndefinedKeys({
+          accessToken: awschat_access_token,
+          sessionId: awschat_sessionId,
+          customAttributes: {
+              visitorAttributes: aws_connect.getVisitorAttributes(),
+              consumerAttributes: {
+                postcode : "SS15 6QU",
+                zeotapSegment : "6324"
+              },
+          }
+      }));
+      if (aws_connect.getCookieValue('id_token')) {
+        payload.accessToken = aws_connect.getCookieValue('id_token');
+      }
+      var fetchUrl = aws_connect.awsApiGateway + "v1/chat/contact-attributes";
+      var requestOptions = { method: "PUT", headers: awsChatHeaders, body: payload };
+      fetch(fetchUrl, requestOptions)
+          .then(function(response) {
+              if (!response.ok) { throw new Error('AWS Connect: Network response was not ok'); }
+              return response.json();
+          });
+      })
+    },
+
+    chatListener: function() {
+        document.addEventListener('click', function(event) {
+            var siteID = undefined;
+            if (event.target.matches(aws_connect.css_selectors)) {
+              if(event.target.matches('.OpenVMChat') || event.target.matches('.OpenVMChat *')) {
+                  console.log('AWS Connect: You clicked: OpenVMChat');
+                  siteID = aws_connect.current_url_mapping;
+              } else if (event.target.matches('.openChatWindow') || event.target.matches('.openChatWindow *')) {
+                  console.log('AWS Connect: You clicked: openChatWindow');
+                  siteID = 'DigitalOffsite';
+              } else {
+                  console.log('AWS Connect: CSS Selector clicked - ' + event.target.id);
+                  siteID = aws_connect.config.css_selectors[event.target.id].siteID
+              }
+            }
+            if (event.target.closest('#angular-chat-to-us-online-v1')) { siteID = 'DigitalOffsite'; }
+            if (event.target.closest('#live-chat')) { siteID = 'DigitalOffsite'; }
+            if(siteID) { aws_connect.connectChatWidget(siteID); }
+        }, false);
+    },
+
+    connectChatWidget: function(siteID) {
+            var config =  aws_connect.widgets[siteID]
+            console.log("AWS Connect: config -", { "siteID": siteID, "widgetID": config.widgetID, "snippetID": config.snippetID });
+            aws_connect.setCookie("awschat_config", siteID);
+
+            (function(w, d, x, id){
+              s=d.createElement("script");
+              s.src=aws_connect.chatInterfaceJs
+              s.async=1;
+              s.id=id;
+              d.getElementsByTagName("head")[0].appendChild(s);
+              w[x] =  w[x] || function() { (w[x].ac = w[x].ac || []).push(arguments) };
+            })(window, document, 'amazon_connect', config.widgetID);
+            amazon_connect('styles', { iconType: 'CHAT', openChat: { color: '#ffffff', backgroundColor: '#322332' }, closeChat: { color: '#ffffff', backgroundColor: '#322332'} });
+            amazon_connect('authenticate', function(authenticateTokenCallback) {
+                aws_connect.orchestrateSession(siteID, authenticateTokenCallback);
+            });
+            amazon_connect('snippetId', config.snippetID);
+            amazon_connect('customStyles', aws_connect.customStyles);
+            amazon_connect('customizationObject', aws_connect.customizationObject);
+            amazon_connect('customLaunchBehavior', {skipIconButtonAndAutoLaunch: true});
+            amazon_connect('supportedMessagingContentTypes', [ 'text/plain', 'text/markdown' ]);
+            amazon_connect('updateSandboxAttributes', 'allow-scripts allow-same-origin allow-popups allow-downloads allow-forms allow-top-navigation-by-user-activation allow-modals allow-top-navigation');
+            amazon_connect("customerChatInterfaceUrl", "https://d3htglnm69vu7a.cloudfront.net/amazon-connect-chat-interface.js");
+            amazon_connect('initialMessage', 'Starting a conversation');
+            if(typeof window.chatContactId === 'undefined') {
+              amazon_connect('contactMetadataHandler', function(metadata) {
+                   if(typeof metadata.chatContactId !== 'undefined' && window.chatContactId !== metadata.chatContactId) {
+                      window.chatContactId = metadata.chatContactId;
+                  }
+              });
+            };
+            var GPLS = 'False';
+            amazon_connect('contactAttributes', {
+                             'css_selector': siteID,
+                             'url': window.location.href
+            });
+    },
+
+    renderChatIcon: function() {
+        var url_config = aws_connect.getConfigFromURL(aws_connect.config, window.location.href)
+        if(url_config) {
+            aws_connect.current_url_mapping = url_config.siteID;
+            aws_connect.forceOpen = url_config.forceOpen;
+        }
+        // NOTE: Side widget auto-render stripped for microsite context —
+        // the widget only launches via explicit .OpenVMChat button clicks.
+    }
+  }
+
+  // Microsite fallback: URL-based auto-routing won't match on our domain,
+  // so default the OpenVMChat click behaviour to the VM_Master_Widget.
+  aws_connect.current_url_mapping = 'VM_Master_Widget';
+
+  // START AWS WIDGET CODE
+  aws_connect.renderChatIcon(aws_connect);
+  aws_connect.chatListener(aws_connect);
+
+ } catch (error) {
+  console.error(error);
+ }
+</script>
+
 </body>
 </html>
